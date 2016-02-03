@@ -30,5 +30,10 @@ namespace hMailServer
         {
             return true;
         }
+
+        public void HandleEhlo(string hostName)
+        {
+            
+        }
     }
 }

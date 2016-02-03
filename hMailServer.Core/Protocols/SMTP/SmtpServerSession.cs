@@ -14,7 +14,7 @@ namespace hMailServer.Core.Protocols.SMTP
             _commandHandler = commandHandler;
         }
 
-        public async Task HandleConnection(IConnection connection)
+        public async void HandleConnection(IConnection connection)
         {
             _connection = connection;
 
@@ -31,6 +31,14 @@ namespace hMailServer.Core.Protocols.SMTP
                     var hostName = CommandParser.ParseHelo(data);
 
                     _commandHandler.HandleHelo(hostName);
+
+                    await _connection.WriteString("250 HELLO\r\n");
+                }
+                else if (data.StartsWith("ehlo"))
+                {
+                    var hostName = CommandParser.ParseEhlo(data);
+
+                    _commandHandler.HandleEhlo(hostName);
 
                     await _connection.WriteString("250 HELLO\r\n");
                 }

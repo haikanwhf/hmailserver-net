@@ -36,5 +36,10 @@ namespace hMailServer.Core.Protocols.SMTP
 
             return value;
         }
+
+        public static string ParseEhlo(string data)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

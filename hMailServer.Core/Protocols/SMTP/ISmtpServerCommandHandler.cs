@@ -8,5 +8,6 @@ namespace hMailServer.Core.Protocols.SMTP
         bool HandleMailFrom(string fromAddress);
         bool HandleRcptTo(string recipientAddress);
         bool HandleData(MemoryStream stream);
+        void HandleEhlo(string hostName);
     }
 }

@@ -8,6 +8,6 @@ namespace hMailServer.Core
 {
     public interface ISession
     {
-        Task HandleConnection(IConnection connection);
+        void HandleConnection(IConnection connection);
     }
 }
