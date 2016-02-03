@@ -1,10 +1,22 @@
-﻿namespace hMailServer.Core.Protocols.SMTP
+﻿using System.Text.RegularExpressions;
+
+namespace hMailServer.Core.Protocols.SMTP
 {
-    class CommandParser
+    internal class CommandParser
     {
+        private static Regex HeloRegex = new Regex(@"^HELO ([\w\.]{1,253})$", RegexOptions.IgnoreCase);
+
         public static string ParseHelo(string command)
         {
-            return command.Substring(4);
+            var match = HeloRegex.Match(command);
+
+            if (!match.Success)
+                return null;
+            
+            if (match.Groups.Count != 2)
+                return null;
+
+            return match.Groups[1].Value;
         }
 
         public static string ParseMailFrom(string command)
