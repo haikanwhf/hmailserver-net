@@ -47,13 +47,50 @@ namespace hMailServer.Core
                 readBytes = await _networkStream.ReadAsync(dataReceived, 0, dataReceived.Length);
             }
 
-            throw new Exception("Expected data not received.");
+            throw new DisconnectedException();
         }
 
-        public async Task<string> ReadUntilNewLine()
+        public async Task<MemoryStream> Read()
         {
-            return await ReadStringUntil("\r\n");
+            if (_inboundStream.Length > 0)
+            {
+                try
+                {
+                    _inboundStream.Seek(0, SeekOrigin.Begin);
+                    return _inboundStream;
+                }
+                finally
+                {
+                    _inboundStream = new MemoryStream();
+                }
+            }
+            
+            byte[] dataReceived = new byte[50];
+            int readBytes = await _networkStream.ReadAsync(dataReceived, 0, dataReceived.Length);
+
+            if (readBytes == 0)
+                throw new DisconnectedException();
+            
+            _inboundStream.Seek(0, SeekOrigin.End);
+            _inboundStream.Write(dataReceived, 0, readBytes);
+            _inboundStream.Seek(0, SeekOrigin.Begin);
+
+            return _inboundStream;
         }
+
+        public void SkipForwardInReadStream(int skipBytes)
+        {
+            if (skipBytes > _inboundStream.Length)
+                throw new ArgumentException("skipBytes cannot exceed buffer length", nameof(skipBytes));
+
+            var allBytes = _inboundStream.ToArray();
+            int remainingBytes = allBytes.Length - skipBytes;
+
+            _inboundStream = new MemoryStream();
+            _inboundStream.Write(allBytes, skipBytes, remainingBytes);
+        }
+
+
 
         public async Task WriteString(string data)
         {

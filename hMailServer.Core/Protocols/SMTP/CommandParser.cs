@@ -4,7 +4,27 @@ namespace hMailServer.Core.Protocols.SMTP
 {
     internal class CommandParser
     {
-        private static Regex HeloRegex = new Regex(@"^HELO ([\w\.]{1,253})$", RegexOptions.IgnoreCase);
+        private static readonly Regex HeloRegex = new Regex(@"^HELO ([\w\.]{1,253})$", RegexOptions.IgnoreCase);
+
+        public static SmtpCommand ParseCommand(string command)
+        {
+            command = command.ToLowerInvariant();
+
+            if (command.StartsWith("helo"))
+                return SmtpCommand.Helo;
+            if (command.StartsWith("ehlo"))
+                return SmtpCommand.Ehlo;
+            if (command.StartsWith("mail from"))
+                return SmtpCommand.MailFrom;
+            if (command.StartsWith("rcpt to"))
+                return SmtpCommand.RcptTo;
+            if (command.StartsWith("data"))
+                return SmtpCommand.Data;
+            if (command.StartsWith("quit"))
+                return SmtpCommand.Quit;
+
+            return SmtpCommand.Unknown;
+        }
 
         public static string ParseHelo(string command)
         {

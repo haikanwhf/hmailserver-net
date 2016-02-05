@@ -40,11 +40,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DisconnectedException.cs" />
     <Compile Include="IConnection.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="Protocols\SMTP\CommandParser.cs" />
     <Compile Include="Protocols\SMTP\ISmtpServerCommandHandler.cs" />
+    <Compile Include="Protocols\SMTP\SmtpCommand.cs" />
     <Compile Include="Protocols\SMTP\SmtpServerSession.cs" />
+    <Compile Include="Protocols\SMTP\SmtpServerSessionState.cs" />
+    <Compile Include="Protocols\SMTP\TransmissionBuffer.cs" />
+    <Compile Include="Protocols\SMTP\TransmissionPeriodRemover.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Connection.cs" />

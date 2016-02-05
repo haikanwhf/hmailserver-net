@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace hMailServer.Core
 {
-    public interface ISession
+    public class DisconnectedException : Exception
     {
-        Task HandleConnection(IConnection connection);
+        
     }
 }
