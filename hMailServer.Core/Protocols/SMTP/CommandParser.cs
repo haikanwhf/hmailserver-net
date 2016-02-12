@@ -45,7 +45,7 @@ namespace hMailServer.Core.Protocols.SMTP
             value = value.Replace("<", "");
             value = value.Replace(">", "");
 
-            return value;
+            return value.Trim();
         }
 
         public static string ParseRcptTo(string command)
@@ -54,12 +54,12 @@ namespace hMailServer.Core.Protocols.SMTP
             value = value.Replace("<", "");
             value = value.Replace(">", "");
 
-            return value;
+            return value.Trim();
         }
 
         public static string ParseEhlo(string data)
         {
-            throw new System.NotImplementedException();
+            return ParseHelo(data);
         }
     }
 }

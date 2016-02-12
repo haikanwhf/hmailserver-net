@@ -9,31 +9,37 @@ namespace hMailServer
     {
         private readonly List<string> _recipientAddress = new List<string>();
 
-        public bool HandleHelo(string hostName)
+        public SmtpCommandResult HandleRset()
         {
-            return true;
+            return new SmtpCommandResult(250, "Ok.");
         }
 
-        public bool HandleMailFrom(string fromAddress)
+        public SmtpCommandResult HandleHelo(string hostName)
         {
-            // Validate blob exists in blob storage
-            return true;
+            return new SmtpCommandResult(250, "Hello.");
         }
 
-        public bool HandleRcptTo(string recipientAddress)
+
+        public SmtpCommandResult HandleEhlo(string hostName)
+        {
+            return new SmtpCommandResult(250, "Ok.");
+        }
+
+        public SmtpCommandResult HandleMailFrom(string fromAddress)
+        {
+            return new SmtpCommandResult(250, "Ok.");
+        }
+
+        public SmtpCommandResult HandleRcptTo(string recipientAddress)
         {
             _recipientAddress.Add(recipientAddress);
-            return true;
+            return new SmtpCommandResult(250, "Ok.");
         }
 
-        public bool HandleData(MemoryStream stream)
+        public SmtpCommandResult HandleData(MemoryStream stream)
         {
-            return true;
+            return new SmtpCommandResult(250, "Ok.");
         }
 
-        public void HandleEhlo(string hostName)
-        {
-            
-        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace hMailServer.Core.Protocols.SMTP
@@ -38,6 +40,9 @@ namespace hMailServer.Core.Protocols.SMTP
 
                     switch (command)
                     {
+                        case SmtpCommand.Rset:
+                            await HandleRset();
+                            break;
                         case SmtpCommand.Helo:
                             await HandleHelo(data);
                             break;
@@ -65,6 +70,12 @@ namespace hMailServer.Core.Protocols.SMTP
             }
         }
 
+        private async Task HandleRset()
+        {
+            var commandResult = _commandHandler.HandleRset();
+            await SendCommandResult(commandResult);
+        }
+
         private async Task HandleQuit()
         {
             await _connection.WriteString("221 Bye\r\n");
@@ -74,65 +85,85 @@ namespace hMailServer.Core.Protocols.SMTP
         {
             await _connection.WriteString("354 OK, send\r\n");
 
+
             var target = new MemoryStream();
 
             var transmissionBuffer = new TransmissionBuffer(target);
 
-            var maildata = await _connection.Read();
-            _connection.SkipForwardInReadStream((int) maildata.Length);
-            transmissionBuffer.Append(maildata);
+            //using (var maildata = await _connection.Read())
+            //{
+            //    var data = Encoding.UTF8.GetString(maildata.ToArray());
+            //    maildata.Seek(0, SeekOrigin.Begin);
+
+            //    //_connection.SkipForwardInReadStream((int) maildata.Length);
+            //    transmissionBuffer.Append(maildata);
+            //}
 
             while (!transmissionBuffer.TransmissionEnded)
             {
-                maildata = await _connection.Read();
-                _connection.SkipForwardInReadStream((int) maildata.Length);
-                transmissionBuffer.Append(maildata);
+                using (var maildata = await _connection.Read())
+                {
+                    var data = Encoding.UTF8.GetString(maildata.ToArray());
+                    maildata.Seek(0, SeekOrigin.Begin);
+
+
+                    //_connection.SkipForwardInReadStream((int) maildata.Length);
+                    transmissionBuffer.Append(maildata);
+                }
             }
 
-            _commandHandler.HandleData(target);
+            transmissionBuffer.Flush();
 
-            await _connection.WriteString("250 queued!\r\n");
+            var commandResult = _commandHandler.HandleData(target);
+
+            await SendCommandResult(commandResult);
         }
 
         private async Task HandleRcptTo(string data)
         {
             var rcptTo = CommandParser.ParseRcptTo(data);
-            _commandHandler.HandleRcptTo(rcptTo);
-            await _connection.WriteString("250 OK\r\n");
+            var commandResult = _commandHandler.HandleRcptTo(rcptTo);
+            await SendCommandResult(commandResult);
 
-            _state.HasRcptTo = true;
+            if (commandResult.IsPositive())
+                _state.HasRcptTo = true;
         }
 
         private async Task HandleMailFrom(string data)
         {
             var fromAddress = CommandParser.ParseMailFrom(data);
-            _commandHandler.HandleMailFrom(fromAddress);
-            await _connection.WriteString("250 OK\r\n");
+            var commandResult = _commandHandler.HandleMailFrom(fromAddress);
 
-            _state.HasMailFrom = true;
+            await SendCommandResult(commandResult);
+            
+            if (commandResult.IsPositive())
+                _state.HasMailFrom = true;
         }
 
         private async Task HandleEhlo(string data)
         {
             var ehloHostName = CommandParser.ParseEhlo(data);
-            _commandHandler.HandleEhlo(ehloHostName);
-            await _connection.WriteString("250 HELLO\r\n");
-
-            _state.HasHelo = true;
+            var commandResult = _commandHandler.HandleEhlo(ehloHostName);
+            await SendCommandResult(commandResult);
+            
+            if (commandResult.IsPositive())
+                _state.HasHelo = true;
         }
 
         private async Task HandleHelo(string data)
         {
             var heloHostName = CommandParser.ParseHelo(data);
-            _commandHandler.HandleHelo(heloHostName);
-            await _connection.WriteString("250 HELLO\r\n");
+            var commandResult = _commandHandler.HandleHelo(heloHostName);
 
-            _state.HasHelo = true;
+            await SendCommandResult(commandResult);
+
+            if (commandResult.IsPositive())
+                _state.HasHelo = true;
         }
 
         private Task SendBanner()
         {
-            string banner = string.Format(CultureInfo.InvariantCulture, "220 {0} ESMTP", Environment.MachineName);
+            string banner = string.Format(CultureInfo.InvariantCulture, "220 {0} ESMTP\r\n", Environment.MachineName);
 
             return _connection.WriteString(banner);
         }
@@ -141,6 +172,16 @@ namespace hMailServer.Core.Protocols.SMTP
         {
             return await connection.ReadStringUntil("\r\n");
         }
+
+        private async Task SendCommandResult(SmtpCommandResult commandResult)
+        {
+            if (commandResult == null)
+                throw new ArgumentException("commandResult");
+            
+            var message = $"{commandResult.Code} {commandResult.Message}\r\n";
+            await _connection.WriteString(message);
+        }
+
 
     }
 

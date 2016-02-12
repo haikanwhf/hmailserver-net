@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace hMailServer.Core
@@ -12,6 +14,6 @@ namespace hMailServer.Core
         Task<string> ReadStringUntil(string delimiter);
         Task<MemoryStream> Read();
         Task WriteString(string data);
-        void SkipForwardInReadStream(int skipBytes);
+        //void SkipForwardInReadStream(int skipBytes);
     }
 }

@@ -9,6 +9,7 @@ namespace hMailServer.Core.Protocols.SMTP
     enum SmtpCommand
     {
         Unknown,
+        Rset,
         Helo,
         Ehlo,
         MailFrom,

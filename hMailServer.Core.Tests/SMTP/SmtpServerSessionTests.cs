@@ -17,7 +17,11 @@ namespace hMailServer.Core.Tests.SMTP
         public void TestCompleteSmtpServerSession()
         {
             var commandHandlerMock = new Mock<ISmtpServerCommandHandler>();
-            commandHandlerMock.Setup(f => f.HandleHelo("example.com.com")).Returns(true);
+            commandHandlerMock.Setup(f => f.HandleHelo("example.com")).Returns(new SmtpCommandResult(250, "Ok"));
+            commandHandlerMock.Setup(f => f.HandleMailFrom("knafve@example.com")).Returns(new SmtpCommandResult(250, "Ok"));
+            commandHandlerMock.Setup(f => f.HandleRcptTo("knafve@example.com")).Returns(new SmtpCommandResult(250, "Ok"));
+            commandHandlerMock.Setup(f => f.HandleData(It.IsAny<MemoryStream>())).Returns(new SmtpCommandResult(250, "Ok"));
+           
 
             var data = "Hello World\r\n.\r\n";
             var memory = new MemoryStream(Encoding.UTF8.GetBytes(data));

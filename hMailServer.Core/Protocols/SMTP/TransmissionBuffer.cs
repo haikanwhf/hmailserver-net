@@ -5,7 +5,7 @@ namespace hMailServer.Core.Protocols.SMTP
 {
     public class TransmissionBuffer
     {
-        private readonly MemoryStream _buffer;
+        private MemoryStream _buffer;
         private bool _transmissionEnded;
         private readonly Stream _target;
         private const int MaxLineLength = 100000;
@@ -40,6 +40,8 @@ namespace hMailServer.Core.Protocols.SMTP
             _transmissionEnded || _buffer.Length > 40000;
 
         public bool TransmissionEnded => _transmissionEnded;
+
+        public long Size => _buffer.Length;
 
         private bool HasTransmissionEndedIndicator()
         {
@@ -92,10 +94,10 @@ namespace hMailServer.Core.Protocols.SMTP
                 If we're forcing a send, send all we got
                 If we found no newline in the stream, the message is malformed according to RFC2821 (max 1000 chars per line). 
              */
-
+             
             byte[] bytesToScanForNewline;
 
-            if (_buffer.Length > MaxLineLength)
+            if (_buffer.Length > MaxLineLength && !_transmissionEnded)
             {
                 bytesToScanForNewline = new byte[MaxLineLength];
                 _buffer.Seek(-MaxLineLength, SeekOrigin.End);
@@ -118,13 +120,24 @@ namespace hMailServer.Core.Protocols.SMTP
                     int skippedBytes = bytesToScanForNewline.Length - i;
 
                     // include the newline character in the flushed data
-                    flushPosition = (int) _buffer.Length - skippedBytes + 1; 
+                    flushPosition = (int) _buffer.Length - skippedBytes + 1;
+
+                    break;
                 }
             }
 
             _buffer.Seek(0, SeekOrigin.Begin);
 
-            TransmissionPeriodRemover.Process(_buffer, _target, flushPosition);
+            int flushPositionRemovingTransmissionEndIndicator = _transmissionEnded ? flushPosition - 3 : flushPosition;
+
+            TransmissionPeriodRemover.Process(_buffer, _target, flushPositionRemovingTransmissionEndIndicator);
+
+            var oldBufferData = _buffer.ToArray();
+            int remainingBytes = oldBufferData.Length - flushPosition;
+
+            _buffer.Dispose();
+            _buffer = new MemoryStream();
+            _buffer.Write(oldBufferData, flushPosition, remainingBytes);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using hMailServer.Core;
 using hMailServer.Core.Protocols.SMTP;
 
@@ -11,11 +12,23 @@ namespace hMailServer
             Func<ISession> connectionFactory = () => 
                 new SmtpServerSession(new NullCommandHandler());
 
-            var smtpServer = new Server(connectionFactory);
+            var serverConfiguration = new ServerConfiguration()
+                {
+                    Port = 250
+                };
 
-            var task = smtpServer.Start();
+            var smtpServer = new Server(connectionFactory, serverConfiguration);
+            
+            var runTask = smtpServer.RunAsync();
 
-            task.Wait();
+            Console.WriteLine("Server running Press Enter to exit...");
+            Console.ReadLine();
+
+            var stopTask = smtpServer.StopAsync();
+
+            Console.WriteLine("Shutting down");
+            
+            Console.WriteLine("Server ");
         }
 
     }

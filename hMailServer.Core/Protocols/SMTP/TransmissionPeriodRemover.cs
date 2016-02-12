@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace hMailServer.Core.Protocols.SMTP
 {
@@ -14,7 +15,7 @@ namespace hMailServer.Core.Protocols.SMTP
         {
             if (inputBytesToProcess > input.Length)
                 throw new ArgumentException("inputBytesToProcess > input.Length", nameof(inputBytesToProcess));
-
+            
             int characterFilter = '\n';
 
             for (int position = 0; position < inputBytesToProcess; position++)

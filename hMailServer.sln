@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Core", "hMailSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Core.Tests", "hMailServer.Core.Tests\hMailServer.Core.Tests.csproj", "{1FBAB01C-BEED-4603-B7AA-A8904B933BCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Smtp.AzureBlobStorage", "hMailServer.Smtp.AzureBlobStorage\hMailServer.Smtp.AzureBlobStorage.csproj", "{0BB750BC-8237-425A-AC1E-0FE68F10FA9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Core.IntegrationTests", "hMailServer.Core.IntegrationTests\hMailServer.Core.IntegrationTests.csproj", "{368C279B-2004-43E8-BFF9-C7805F16ADDD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{1FBAB01C-BEED-4603-B7AA-A8904B933BCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1FBAB01C-BEED-4603-B7AA-A8904B933BCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1FBAB01C-BEED-4603-B7AA-A8904B933BCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BB750BC-8237-425A-AC1E-0FE68F10FA9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BB750BC-8237-425A-AC1E-0FE68F10FA9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BB750BC-8237-425A-AC1E-0FE68F10FA9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BB750BC-8237-425A-AC1E-0FE68F10FA9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{368C279B-2004-43E8-BFF9-C7805F16ADDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{368C279B-2004-43E8-BFF9-C7805F16ADDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{368C279B-2004-43E8-BFF9-C7805F16ADDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{368C279B-2004-43E8-BFF9-C7805F16ADDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

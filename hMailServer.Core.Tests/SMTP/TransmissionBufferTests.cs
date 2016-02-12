@@ -58,5 +58,19 @@ namespace hMailServer.Core.Tests.SMTP
 
             Assert.AreEqual("Hello World\r\n", receivedData);
         }
+
+        [Test]
+        public void TransmissonBufferShouldBeEmptyAfterFlush()
+        {
+            var target = new MemoryStream();
+
+            var data = "Hello World\r\n.\r\n";
+            var bytes = Encoding.UTF8.GetBytes(data);
+
+            var transmissionBuffer = new TransmissionBuffer(target);
+            transmissionBuffer.Append(new MemoryStream(bytes));
+            
+            Assert.AreEqual(0, transmissionBuffer.Size);
+        }
     }
 }
