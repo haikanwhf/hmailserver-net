@@ -14,6 +14,8 @@ namespace hMailServer.Core.Protocols.SMTP
                 return SmtpCommand.Helo;
             if (command.StartsWith("ehlo"))
                 return SmtpCommand.Ehlo;
+            if (command.StartsWith("starttls"))
+                return SmtpCommand.StartTls;
             if (command.StartsWith("mail from"))
                 return SmtpCommand.MailFrom;
             if (command.StartsWith("rcpt to"))

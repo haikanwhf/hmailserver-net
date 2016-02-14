@@ -12,6 +12,13 @@ namespace hMailServer.Core.Protocols.SMTP
         public bool HasMailFrom { get; set; }
         public bool HasRcptTo { get; set; }
 
+        public void Reset()
+        {
+            HasHelo = false;
+            HasMailFrom = false;
+            HasRcptTo = false;
+        }
+
         public bool IsCommandValid(SmtpCommand command)
         {
             switch (command)
@@ -19,6 +26,8 @@ namespace hMailServer.Core.Protocols.SMTP
                 case SmtpCommand.Helo:
                 case SmtpCommand.Ehlo:
                     return true;
+                case SmtpCommand.StartTls:
+                    return HasHelo && !HasMailFrom;
                 case SmtpCommand.MailFrom:
                     return HasHelo && !HasMailFrom;
                 case SmtpCommand.RcptTo:

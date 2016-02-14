@@ -54,6 +54,7 @@
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Connection.cs" />
+    <Compile Include="Protocols\SMTP\SmtpServerSessionConfiguration.cs" />
     <Compile Include="ServerConfiguration.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

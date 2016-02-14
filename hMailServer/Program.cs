@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using hMailServer.Core;
 using hMailServer.Core.Protocols.SMTP;
@@ -10,7 +11,7 @@ namespace hMailServer
         static void Main(string[] args)
         {
             Func<ISession> connectionFactory = () => 
-                new SmtpServerSession(new NullCommandHandler());
+                new SmtpServerSession(new NullCommandHandler(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration()
                 {

@@ -13,7 +13,7 @@ namespace hMailServer.Smtp.AzureBlobStorage
         static void Main(string[] args)
         {
             Func<ISession> connectionFactory = () =>
-                new SmtpServerSession(new AzureBlobStorageSmtpServerCommandHandler());
+                new SmtpServerSession(new AzureBlobStorageSmtpServerCommandHandler(), new SmtpServerSessionConfiguration());
 
             var smtpServer = new Server(connectionFactory, new ServerConfiguration());
 

@@ -38,7 +38,7 @@ namespace hMailServer.Core.Tests.SMTP
                     memory
                 });
 
-            SmtpServerSession session = new SmtpServerSession(commandHandlerMock.Object);
+            SmtpServerSession session = new SmtpServerSession(commandHandlerMock.Object, new SmtpServerSessionConfiguration());
 
             var task = session.HandleConnection(connectionMock);
             task.Wait();

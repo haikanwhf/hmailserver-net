@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,18 +16,21 @@ namespace hMailServer.Core
         private MemoryStream _inboundUnprocessedStream = new MemoryStream();
         private readonly CancellationToken _cancellationToken;
 
+        private Stream _transferStream;
+
         public Connection(TcpClient tcpClient, CancellationToken cancellationToken)
         {
             _tcpClient = tcpClient;
             
             _networkStream = _tcpClient.GetStream();
+            _transferStream = _networkStream;
             _cancellationToken = cancellationToken;
         }
 
         public async Task<string> ReadStringUntil(string delimiter)
         {
             byte[] dataReceived = new byte[1024];
-            int readBytes = await _networkStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
+            int readBytes = await _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
 
             while (readBytes > 0)
             {
@@ -48,7 +53,7 @@ namespace hMailServer.Core
                     return data.Substring(0, index);
                 }
 
-                readBytes = await _networkStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
+                readBytes = await _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
             }
 
             throw new DisconnectedException();
@@ -78,7 +83,7 @@ namespace hMailServer.Core
             var readStream = new MemoryStream();
 
             byte[] dataReceived = new byte[1024 * 40];
-            int readBytes = await _networkStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
+            int readBytes = await _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
 
             if (readBytes == 0)
                 throw new DisconnectedException();
@@ -107,11 +112,21 @@ namespace hMailServer.Core
         {
             var bytes = Encoding.UTF8.GetBytes(data);
 
-            await _networkStream.WriteAsync(bytes, 0, bytes.Length, _cancellationToken);
+            await _transferStream.WriteAsync(bytes, 0, bytes.Length, _cancellationToken);
+        }
+
+        public async Task SslHandshakeAsServer(X509Certificate2 certificate)
+        {
+            var sslStream = new SslStream(_transferStream);
+            
+            await sslStream.AuthenticateAsServerAsync(certificate);
+
+            _transferStream = sslStream;
         }
 
         public void Dispose()
         {
+            _transferStream.Dispose();
             _networkStream.Dispose();
             _inboundUnprocessedStream.Dispose();
             _tcpClient.Close();

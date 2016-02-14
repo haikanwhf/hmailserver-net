@@ -13,11 +13,12 @@ namespace hMailServer.Core
         private readonly Func<ISession> _sessionFactory;
         private readonly List<Task> _sessionTasks = new List<Task>();
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
-        
+        private readonly ServerConfiguration _configuration;
+
         public Server(Func<ISession> sessionFactory, ServerConfiguration serverConfiguration)
         {
             _sessionFactory = sessionFactory;
-
+            _configuration = serverConfiguration;
             _listener = new TcpListener(serverConfiguration.IpAddress, serverConfiguration.Port);
         }
 

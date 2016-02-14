@@ -2,8 +2,12 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Mail;
+using System.Net.Security;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using hMailServer.Core.Protocols.SMTP;
@@ -20,7 +24,7 @@ namespace hMailServer.Core.IntegrationTests
             var commandHandler = new InMemoryCommandHandler();
 
             Func<ISession> connectionFactory = () =>
-                new SmtpServerSession(commandHandler);
+                new SmtpServerSession(commandHandler, new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration();
 
@@ -57,6 +61,70 @@ namespace hMailServer.Core.IntegrationTests
             var bodyStart = mailMessage.IndexOf("\r\n\r\n", StringComparison.InvariantCultureIgnoreCase);
             var body = mailMessage.Substring(bodyStart + 4);
             Assert.AreEqual("Test\r\n\r\n", body);
+        }
+
+        [Test]
+        public void TestSmtpEndToEndWithSsl()
+        {
+            var commandHandler = new InMemoryCommandHandler();
+
+            var certificate = new X509Certificate2();
+            certificate.Import(Resources.debugcert, "secret", X509KeyStorageFlags.Exportable);
+
+            var smtpSessionConfiguration = new SmtpServerSessionConfiguration()
+                {
+                    SslCertificate = certificate
+                };
+
+            Func<ISession> connectionFactory = () =>
+                new SmtpServerSession(commandHandler, smtpSessionConfiguration);
+
+            var serverConfiguration = new ServerConfiguration();
+
+            var smtpServer = new Server(connectionFactory, serverConfiguration);
+            var runTask = smtpServer.RunAsync();
+
+            using (var message = new MailMessage())
+            {
+                message.From = new MailAddress("sender@example.com");
+                message.To.Add(new MailAddress("recipient1@example.com"));
+                message.To.Add(new MailAddress("recipient2@example.com"));
+                message.Body = "Test";
+
+                using (var client = new SmtpClient(smtpServer.LocalEndpoint.Address.ToString(),
+                        smtpServer.LocalEndpoint.Port))
+
+                {
+                    ServicePointManager.ServerCertificateValidationCallback = (sender, serverCertificate, chain, sslPolicyErrors) =>
+                    {
+                        var certificate2 = (X509Certificate2) serverCertificate;
+                        return certificate2.Thumbprint == certificate.Thumbprint;
+                    };
+
+                    client.EnableSsl = true;
+                    client.Send(message);
+                }
+            }
+
+            var stopTask = smtpServer.StopAsync();
+
+            Assert.IsTrue(stopTask.Wait(TimeSpan.FromMilliseconds(2000)));
+            Assert.IsTrue(runTask.Wait(TimeSpan.FromMilliseconds(2000)));
+
+            Assert.AreEqual("sender@example.com", commandHandler.MailFrom);
+            Assert.AreEqual(2, commandHandler.Recipients.Count);
+            Assert.AreEqual("recipient1@example.com", commandHandler.Recipients[0]);
+            Assert.AreEqual("recipient2@example.com", commandHandler.Recipients[1]);
+
+            string mailMessage = Encoding.UTF8.GetString(commandHandler.Body.ToArray());
+            var bodyStart = mailMessage.IndexOf("\r\n\r\n", StringComparison.InvariantCultureIgnoreCase);
+            var body = mailMessage.Substring(bodyStart + 4);
+            Assert.AreEqual("Test\r\n\r\n", body);
+        }
+
+        public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
         }
     }
 }

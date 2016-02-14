@@ -14,6 +14,6 @@ namespace hMailServer.Core
         Task<string> ReadStringUntil(string delimiter);
         Task<MemoryStream> Read();
         Task WriteString(string data);
-        //void SkipForwardInReadStream(int skipBytes);
+        Task SslHandshakeAsServer(X509Certificate2 certificate);
     }
 }

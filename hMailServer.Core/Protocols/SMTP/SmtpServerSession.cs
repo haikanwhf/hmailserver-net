@@ -12,10 +12,12 @@ namespace hMailServer.Core.Protocols.SMTP
         private IConnection _connection;
         private readonly ISmtpServerCommandHandler _commandHandler;
         private readonly SmtpServerSessionState _state = new SmtpServerSessionState();
+        private readonly SmtpServerSessionConfiguration _configuration;
 
-        public SmtpServerSession(ISmtpServerCommandHandler commandHandler)
+        public SmtpServerSession(ISmtpServerCommandHandler commandHandler, SmtpServerSessionConfiguration configuration)
         {
             _commandHandler = commandHandler;
+            _configuration = configuration;
         }
 
         public async Task HandleConnection(IConnection connection)
@@ -49,6 +51,9 @@ namespace hMailServer.Core.Protocols.SMTP
                         case SmtpCommand.Ehlo:
                             await HandleEhlo(data);
                             break;
+                        case SmtpCommand.StartTls:
+                            await HandleStartTls();
+                            break;
                         case SmtpCommand.MailFrom:
                             await HandleMailFrom(data);
                             break;
@@ -70,6 +75,17 @@ namespace hMailServer.Core.Protocols.SMTP
             }
         }
 
+        private async Task HandleStartTls()
+        {
+            await _connection.WriteString("220 Go ahead\r\n");
+
+            await _connection.SslHandshakeAsServer(_configuration.SslCertificate);
+
+            _commandHandler.HandleRset();
+
+            _state.Reset();
+        }
+
         private async Task HandleRset()
         {
             var commandResult = _commandHandler.HandleRset();
@@ -89,25 +105,13 @@ namespace hMailServer.Core.Protocols.SMTP
             var target = new MemoryStream();
 
             var transmissionBuffer = new TransmissionBuffer(target);
-
-            //using (var maildata = await _connection.Read())
-            //{
-            //    var data = Encoding.UTF8.GetString(maildata.ToArray());
-            //    maildata.Seek(0, SeekOrigin.Begin);
-
-            //    //_connection.SkipForwardInReadStream((int) maildata.Length);
-            //    transmissionBuffer.Append(maildata);
-            //}
-
+            
             while (!transmissionBuffer.TransmissionEnded)
             {
                 using (var maildata = await _connection.Read())
                 {
-                    var data = Encoding.UTF8.GetString(maildata.ToArray());
                     maildata.Seek(0, SeekOrigin.Begin);
-
-
-                    //_connection.SkipForwardInReadStream((int) maildata.Length);
+                    
                     transmissionBuffer.Append(maildata);
                 }
             }
@@ -144,10 +148,25 @@ namespace hMailServer.Core.Protocols.SMTP
         {
             var ehloHostName = CommandParser.ParseEhlo(data);
             var commandResult = _commandHandler.HandleEhlo(ehloHostName);
-            await SendCommandResult(commandResult);
-            
+
             if (commandResult.IsPositive())
+            {
+                var response = new StringBuilder();
+                response.AppendFormat("250-{0}\r\n", Environment.MachineName);
+
+                if (_configuration.SslCertificate != null)
+                    response.AppendFormat("250-STARTTLS\r\n");
+
+                response.AppendFormat("250 HELP\r\n");
+
+                await _connection.WriteString(response.ToString());
+
                 _state.HasHelo = true;
+            }
+            else
+            {
+                await SendCommandResult(commandResult);
+            }
         }
 
         private async Task HandleHelo(string data)
