@@ -36,7 +36,7 @@ namespace hMailServer
             return new SmtpCommandResult(250, "Ok.");
         }
 
-        public SmtpCommandResult HandleData(MemoryStream stream)
+        public SmtpCommandResult HandleData(Stream stream)
         {
             return new SmtpCommandResult(250, "Ok.");
         }

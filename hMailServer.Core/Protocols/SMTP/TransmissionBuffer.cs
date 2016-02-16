@@ -138,6 +138,11 @@ namespace hMailServer.Core.Protocols.SMTP
             _buffer.Dispose();
             _buffer = new MemoryStream();
             _buffer.Write(oldBufferData, flushPosition, remainingBytes);
+
+            if (_transmissionEnded)
+            {
+                _target.Seek(0, SeekOrigin.Begin);
+            }
         }
     }
 }

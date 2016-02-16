@@ -45,9 +45,9 @@ namespace hMailServer.Core.Protocols.SMTP
                 }
 
                 output.WriteByte(Convert.ToByte(character));
-
-                
+    
             }
+
         }
     }
 }

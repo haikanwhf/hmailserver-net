@@ -43,6 +43,7 @@
     <Compile Include="DisconnectedException.cs" />
     <Compile Include="IConnection.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="MemoryStreamWithFileBacking.cs" />
     <Compile Include="Protocols\SMTP\CommandParser.cs" />
     <Compile Include="Protocols\SMTP\ISmtpServerCommandHandler.cs" />
     <Compile Include="Protocols\SMTP\SmtpCommand.cs" />

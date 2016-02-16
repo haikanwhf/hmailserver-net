@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
@@ -57,7 +58,9 @@ namespace hMailServer.Core.IntegrationTests
             Assert.AreEqual("recipient1@example.com", commandHandler.Recipients[0]);
             Assert.AreEqual("recipient2@example.com", commandHandler.Recipients[1]);
 
-            string mailMessage = Encoding.UTF8.GetString(commandHandler.Body.ToArray());
+            var bodyStream = new MemoryStream();
+            commandHandler.Body.CopyTo(bodyStream);
+            string mailMessage = Encoding.UTF8.GetString(bodyStream.ToArray());
             var bodyStart = mailMessage.IndexOf("\r\n\r\n", StringComparison.InvariantCultureIgnoreCase);
             var body = mailMessage.Substring(bodyStart + 4);
             Assert.AreEqual("Test\r\n\r\n", body);
@@ -116,7 +119,10 @@ namespace hMailServer.Core.IntegrationTests
             Assert.AreEqual("recipient1@example.com", commandHandler.Recipients[0]);
             Assert.AreEqual("recipient2@example.com", commandHandler.Recipients[1]);
 
-            string mailMessage = Encoding.UTF8.GetString(commandHandler.Body.ToArray());
+            var bodyStream = new MemoryStream();
+            commandHandler.Body.CopyTo(bodyStream);
+
+            string mailMessage = Encoding.UTF8.GetString(bodyStream.ToArray());
             var bodyStart = mailMessage.IndexOf("\r\n\r\n", StringComparison.InvariantCultureIgnoreCase);
             var body = mailMessage.Substring(bodyStart + 4);
             Assert.AreEqual("Test\r\n\r\n", body);

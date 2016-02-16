@@ -13,6 +13,7 @@ namespace hMailServer.Core.Protocols.SMTP
         private readonly ISmtpServerCommandHandler _commandHandler;
         private readonly SmtpServerSessionState _state = new SmtpServerSessionState();
         private readonly SmtpServerSessionConfiguration _configuration;
+        private const int DataTransferMemoryBufferMaxSize = 1024*30;
 
         public SmtpServerSession(ISmtpServerCommandHandler commandHandler, SmtpServerSessionConfiguration configuration)
         {
@@ -102,7 +103,7 @@ namespace hMailServer.Core.Protocols.SMTP
             await _connection.WriteString("354 OK, send\r\n");
 
 
-            var target = new MemoryStream();
+            var target = new MemoryStreamWithFileBacking(DataTransferMemoryBufferMaxSize);
 
             var transmissionBuffer = new TransmissionBuffer(target);
             

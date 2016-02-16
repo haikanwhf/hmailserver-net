@@ -55,7 +55,7 @@ namespace hMailServer.Smtp.AzureBlobStorage
                 return new SmtpCommandResult(550, "No such user");
         }
 
-        public SmtpCommandResult HandleData(MemoryStream stream)
+        public SmtpCommandResult HandleData(Stream stream)
         {
             var blobClient = _storageAccount.CreateCloudBlobClient();
             var mailContainer = blobClient.GetContainerReference("mail");

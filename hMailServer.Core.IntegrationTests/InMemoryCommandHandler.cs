@@ -14,7 +14,7 @@ namespace hMailServer.Core.IntegrationTests
         public string EhloHostname { get; set; }
         public string MailFrom { get; set; }
         public List<string> Recipients { get; set; } = new List<string>();
-        public MemoryStream Body = new MemoryStream(); 
+        public Stream Body;
 
         public SmtpCommandResult HandleRset()
         {
@@ -22,8 +22,7 @@ namespace hMailServer.Core.IntegrationTests
             EhloHostname = null;
             MailFrom = null;
             Recipients = new List<string>();
-            Body = new MemoryStream();
-
+        
             return SmtpCommandResult.Default250Success();  
         }
 
@@ -51,7 +50,7 @@ namespace hMailServer.Core.IntegrationTests
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleData(MemoryStream stream)
+        public SmtpCommandResult HandleData(Stream stream)
         {
             Body = stream;
 

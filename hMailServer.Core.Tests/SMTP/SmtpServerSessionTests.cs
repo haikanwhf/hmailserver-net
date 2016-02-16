@@ -20,8 +20,7 @@ namespace hMailServer.Core.Tests.SMTP
             commandHandlerMock.Setup(f => f.HandleHelo("example.com")).Returns(new SmtpCommandResult(250, "Ok"));
             commandHandlerMock.Setup(f => f.HandleMailFrom("knafve@example.com")).Returns(new SmtpCommandResult(250, "Ok"));
             commandHandlerMock.Setup(f => f.HandleRcptTo("knafve@example.com")).Returns(new SmtpCommandResult(250, "Ok"));
-            commandHandlerMock.Setup(f => f.HandleData(It.IsAny<MemoryStream>())).Returns(new SmtpCommandResult(250, "Ok"));
-           
+            commandHandlerMock.Setup(f => f.HandleData(It.IsAny<MemoryStreamWithFileBacking>())).Returns(new SmtpCommandResult(250, "Ok"));
 
             var data = "Hello World\r\n.\r\n";
             var memory = new MemoryStream(Encoding.UTF8.GetBytes(data));
@@ -44,14 +43,17 @@ namespace hMailServer.Core.Tests.SMTP
             task.Wait();
 
             commandHandlerMock.Verify(f => f.HandleHelo("example.com"));
-            commandHandlerMock.Verify(f => f.HandleData(It.Is<MemoryStream>(f2 => VerifyMemoryStreamContents(f2, "Hello World\r\n"))));
+            commandHandlerMock.Verify(f => f.HandleData(It.Is<MemoryStreamWithFileBacking>(f2 => VerifyMemoryStreamContents(f2, "Hello World\r\n"))));
         }
 
 
 
-        private bool VerifyMemoryStreamContents(MemoryStream stream, string expectedText)
+        private bool VerifyMemoryStreamContents(Stream stream, string expectedText)
         {
-            var actualBytes = stream.ToArray();
+            var memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
+
+            var actualBytes = memoryStream.ToArray();
             var actualText = Encoding.UTF8.GetString(actualBytes);
 
             return expectedText == actualText;

@@ -9,6 +9,6 @@ namespace hMailServer.Core.Protocols.SMTP
         SmtpCommandResult HandleEhlo(string hostName);
         SmtpCommandResult HandleMailFrom(string fromAddress);
         SmtpCommandResult HandleRcptTo(string recipientAddress);
-        SmtpCommandResult HandleData(MemoryStream stream);
+        SmtpCommandResult HandleData(Stream stream);
     }
 }
