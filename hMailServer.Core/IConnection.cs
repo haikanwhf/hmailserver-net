@@ -11,7 +11,9 @@ namespace hMailServer.Core
 {
     public interface IConnection
     {
-        Task<string> ReadStringUntil(string delimiter);
+        void SetTimeout(TimeSpan timeout);
+
+        Task<string> ReadStringUntil(string delimiters);
         Task<MemoryStream> Read();
         Task WriteString(string data);
         Task SslHandshakeAsServer(X509Certificate2 certificate);

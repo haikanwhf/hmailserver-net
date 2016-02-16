@@ -31,6 +31,8 @@ namespace hMailServer.Core.Protocols.SMTP
 
                 while (true)
                 {
+                    _connection.SetTimeout(_configuration.EnvelopeCommandTimeout);
+
                     var data = await ReadUntilNewLine(_connection);
 
                     var command = CommandParser.ParseCommand(data);
@@ -102,6 +104,7 @@ namespace hMailServer.Core.Protocols.SMTP
         {
             await _connection.WriteString("354 OK, send\r\n");
 
+            _connection.SetTimeout(_configuration.DataCommandTimeout);
 
             var target = new MemoryStreamWithFileBacking(DataTransferMemoryBufferMaxSize);
 
@@ -188,9 +191,9 @@ namespace hMailServer.Core.Protocols.SMTP
             return _connection.WriteString(banner);
         }
 
-        public async Task<string> ReadUntilNewLine(IConnection connection)
+        public Task<string> ReadUntilNewLine(IConnection connection)
         {
-            return await connection.ReadStringUntil("\r\n");
+            return connection.ReadStringUntil("\r\n");
         }
 
         private async Task SendCommandResult(SmtpCommandResult commandResult)

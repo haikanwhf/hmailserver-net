@@ -15,7 +15,7 @@ namespace hMailServer
 
             var serverConfiguration = new ServerConfiguration()
                 {
-                    Port = 250
+                    Port = 25
                 };
 
             var smtpServer = new Server(connectionFactory, serverConfiguration);
