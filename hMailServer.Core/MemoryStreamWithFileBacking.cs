@@ -57,7 +57,7 @@ namespace hMailServer.Core
                 if (_memoryStream.Length + count > _memoryBufferMaxSize)
                 {
                     // Swap from memory to file
-                    _fileStream = File.Open(_backingFilePath, FileMode.CreateNew, FileAccess.Write, FileShare.ReadWrite);
+                    _fileStream = File.Open(_backingFilePath, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
 
                     _memoryStream.Seek(0, SeekOrigin.Begin);
                     _memoryStream.WriteTo(_fileStream);

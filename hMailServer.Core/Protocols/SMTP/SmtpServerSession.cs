@@ -125,6 +125,9 @@ namespace hMailServer.Core.Protocols.SMTP
             var commandResult = _commandHandler.HandleData(target);
 
             await SendCommandResult(commandResult);
+
+            _state.HasMailFrom = false;
+            _state.HasRcptTo = false;
         }
 
         private async Task HandleRcptTo(string data)
