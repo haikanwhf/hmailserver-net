@@ -97,6 +97,7 @@ namespace hMailServer.Core.IntegrationTests
                 using (var client = new SmtpClient(smtpServer.LocalEndpoint.Address.ToString(),
                         smtpServer.LocalEndpoint.Port))
 
+
                 {
                     ServicePointManager.ServerCertificateValidationCallback = (sender, serverCertificate, chain, sslPolicyErrors) =>
                     {

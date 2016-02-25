@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Security;
@@ -15,91 +16,62 @@ namespace hMailServer.Core
         private readonly TcpClient _tcpClient;
         private readonly NetworkStream _networkStream;
         private MemoryStream _inboundUnprocessedStream = new MemoryStream();
-        private readonly CancellationToken _cancellationToken;
-
+        
+        private CancellationToken _cancellationToken;
         private Stream _transferStream;
 
         private TimeSpan _currentTimeout = TimeSpan.FromSeconds(30);
-
+        
         public Connection(TcpClient tcpClient, CancellationToken cancellationToken)
         {
             _tcpClient = tcpClient;
             
             _networkStream = _tcpClient.GetStream();
             _transferStream = _networkStream;
+            
             _cancellationToken = cancellationToken;
         }
-
-        private Task CreateTimeoutTask()
-        {
-            return Task.Delay(_currentTimeout, _cancellationToken);
-        }
-
+        
         public void SetTimeout(TimeSpan timeout)
         {
             _currentTimeout = timeout;
         }
-
+       
         public async Task<string> ReadStringUntil(string delimiter)
         {
             byte[] dataReceived = new byte[1024];
 
             while (true)
             {
-                var timeoutTask = CreateTimeoutTask();
-                Task<int> readBytesTask = _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length,
-                    _cancellationToken);
-
-                await Task.WhenAny(timeoutTask, readBytesTask);
-
-                if (readBytesTask.IsCompleted)
-                {
-                    int readBytes = readBytesTask.Result;
-
-                    if (readBytes <= 0)
-                        throw new DisconnectedException();
-
-                    _inboundUnprocessedStream.Write(dataReceived, 0, readBytes);
-
-                    var allBytes = _inboundUnprocessedStream.ToArray();
-                    var data = Encoding.UTF8.GetString(allBytes);
-
-                    var index = data.IndexOf(delimiter, StringComparison.InvariantCultureIgnoreCase);
-
-                    if (index >= 0)
+                var readBytes = await ExecuteWithTimeout(() =>
                     {
-                        int remainingStartIndex = index + delimiter.Length;
-                        int remainingBytes = allBytes.Length - remainingStartIndex;
+                        return _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
+                    });
+                
+                if (readBytes <= 0)
+                    throw new DisconnectedException();
 
-                        _inboundUnprocessedStream?.Dispose();
-                        _inboundUnprocessedStream = new MemoryStream();
-                        _inboundUnprocessedStream.Write(allBytes, remainingStartIndex, remainingBytes);
+                _inboundUnprocessedStream.Write(dataReceived, 0, readBytes);
 
-                        return data.Substring(0, index);
-                    }
+                var allBytes = _inboundUnprocessedStream.ToArray();
+                var data = Encoding.UTF8.GetString(allBytes);
 
-                    continue;
-                }
+                var index = data.IndexOf(delimiter, StringComparison.InvariantCultureIgnoreCase);
 
-                if (timeoutTask.IsCompleted)
+                if (index >= 0)
                 {
-                    HandleTimeout();
-                }
+                    int remainingStartIndex = index + delimiter.Length;
+                    int remainingBytes = allBytes.Length - remainingStartIndex;
 
+                    _inboundUnprocessedStream?.Dispose();
+                    _inboundUnprocessedStream = new MemoryStream();
+                    _inboundUnprocessedStream.Write(allBytes, remainingStartIndex, remainingBytes);
+
+                    return data.Substring(0, index);
+                }
             }
         }
-
-        public Task<MemoryStream> Read(TimeSpan timeout)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void HandleTimeout()
-        {
-            _networkStream.Close();
-            throw new DisconnectedException();
-        }
-
+        
         /// <summary>
         /// Reads pending data and returns it.
         /// Any unprocessed data is returned first.
@@ -120,64 +92,75 @@ namespace hMailServer.Core
                     _inboundUnprocessedStream = null;
                 }
             }
+            
+            byte[] dataReceived = new byte[1024 * 40];
 
-            var timeoutTask = CreateTimeoutTask();
+            var bytesRead = await ExecuteWithTimeout<int>(() =>
+                {
+                    return _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
+                });
 
             var readStream = new MemoryStream();
+            
+            if (bytesRead <= 0)
+                throw new DisconnectedException();
 
-            byte[] dataReceived = new byte[1024 * 40];
-            Task<int> readTask = _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
+            readStream.Write(dataReceived, 0, bytesRead);
+            readStream.Seek(0, SeekOrigin.Begin);
 
-            await Task.WhenAny(timeoutTask, readTask);
-
-            if (readTask.IsCompleted)
-            {
-                int bytesRead = readTask.Result;
-
-                if (bytesRead <= 0)
-                    throw new DisconnectedException();
-
-                readStream.Write(dataReceived, 0, bytesRead);
-                readStream.Seek(0, SeekOrigin.Begin);
-
-                return readStream;
-            }
-
-            HandleTimeout();
-
-            return null;
+            return readStream;
         }
-       
-       
+
+        public async Task ExecuteWithTimeout(Task func)
+        {
+            await ExecuteWithTimeout<int>(async () =>
+            {
+                await func;
+
+                return 0;
+            });
+        }
+
+        public async Task<T> ExecuteWithTimeout<T>(Func<Task<T>> func)
+        {
+            var timeoutCancellationTokenSource = new CancellationTokenSource();
+            var timeoutTask = Task.Delay(_currentTimeout, timeoutCancellationTokenSource.Token);
+
+            var task = func();
+
+            await Task.WhenAny(timeoutTask, task);
+
+            if (timeoutTask.IsCompleted)
+                throw new DisconnectedException();
+
+            // Cancel the Task.Delay to prevent it from consuming memory until it completes.
+            timeoutCancellationTokenSource.Cancel();
+
+            return task.Result;
+        }
+
         public async Task WriteString(string data)
         {
             var bytes = Encoding.UTF8.GetBytes(data);
 
-            var timeoutTask = CreateTimeoutTask();
+            await ExecuteWithTimeout(async () =>
+                {
+                    await _transferStream.WriteAsync(bytes, 0, bytes.Length, _cancellationToken);
 
-            var writeTask = _transferStream.WriteAsync(bytes, 0, bytes.Length, _cancellationToken);
-
-            await Task.WhenAny(timeoutTask, writeTask);
-
-            if (timeoutTask.IsCompleted)
-            {
-                HandleTimeout();
-            }
+                    return 0;
+                });
         }
 
         public async Task SslHandshakeAsServer(X509Certificate2 certificate)
         {
             var sslStream = new SslStream(_transferStream);
 
-            var timeoutTask = Task.Delay(_currentTimeout, _cancellationToken);
-            var handshakeTask = sslStream.AuthenticateAsServerAsync(certificate);
+            await ExecuteWithTimeout(async () =>
+                {
+                    await sslStream.AuthenticateAsServerAsync(certificate);
 
-            await Task.WhenAny(timeoutTask, handshakeTask);
-
-            if (timeoutTask.IsCompleted)
-            {
-                HandleTimeout();
-            }
+                    return 0;
+                });
 
             _transferStream = sslStream;
         }

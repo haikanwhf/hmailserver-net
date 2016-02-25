@@ -11,7 +11,6 @@ namespace hMailServer.Core
     {
         private readonly TcpListener _listener;
         private readonly Func<ISession> _sessionFactory;
-        private readonly List<Task> _sessionTasks = new List<Task>();
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ServerConfiguration _configuration;
 
@@ -49,14 +48,20 @@ namespace hMailServer.Core
 
                 var session = _sessionFactory();
 
-                _sessionTasks.Add(session.HandleConnection(connection));
+                var sessionTask = session.HandleConnection(connection);
+
+                sessionTask.ContinueWith(f =>
+                    {
+                        // Session has ended.
+                        connection.Dispose();
+                    });
             }
         }
 
         public async Task StopAsync()
         {
             _cancellationTokenSource.Cancel();
-
+            _cancellationTokenSource.Dispose();
             _listener.Stop();
 
             await Task.WhenAll();
