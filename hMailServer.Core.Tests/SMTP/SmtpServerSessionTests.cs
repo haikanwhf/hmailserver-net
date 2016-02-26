@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.SMTP;
 using Moq;
 using NUnit.Framework;
@@ -37,7 +38,7 @@ namespace hMailServer.Core.Tests.SMTP
                     memory
                 });
 
-            SmtpServerSession session = new SmtpServerSession(commandHandlerMock.Object, new SmtpServerSessionConfiguration());
+            SmtpServerSession session = new SmtpServerSession(commandHandlerMock.Object, new NullLog(), new SmtpServerSessionConfiguration());
 
             var task = session.HandleConnection(connectionMock);
             task.Wait();

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using hMailServer.Core.Logging;
 
 namespace hMailServer.Core.Protocols.SMTP
 {
@@ -14,11 +15,13 @@ namespace hMailServer.Core.Protocols.SMTP
         private readonly SmtpServerSessionState _state = new SmtpServerSessionState();
         private readonly SmtpServerSessionConfiguration _configuration;
         private const int DataTransferMemoryBufferMaxSize = 1024*30;
+        private ILog _log;
 
-        public SmtpServerSession(ISmtpServerCommandHandler commandHandler, SmtpServerSessionConfiguration configuration)
+        public SmtpServerSession(ISmtpServerCommandHandler commandHandler, ILog log, SmtpServerSessionConfiguration configuration)
         {
             _commandHandler = commandHandler;
             _configuration = configuration;
+            _log = log;
         }
 
         public async Task HandleConnection(IConnection connection)
@@ -34,12 +37,12 @@ namespace hMailServer.Core.Protocols.SMTP
                     _connection.SetTimeout(_configuration.EnvelopeCommandTimeout);
 
                     var data = await ReadUntilNewLine(_connection);
-
+                   
                     var command = CommandParser.ParseCommand(data);
 
                     if (!_state.IsCommandValid(command))
                     {
-                        await _connection.WriteString("503 bad sequence of commands\r\n");
+                        await SendCommandResult(new SmtpCommandResult(503, "bad sequence of commands"));
                         continue;
                     }
 
@@ -80,7 +83,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private async Task HandleStartTls()
         {
-            await _connection.WriteString("220 Go ahead\r\n");
+            await SendCommandResult(new SmtpCommandResult(220, "220 Go ahead"));
 
             await _connection.SslHandshakeAsServer(_configuration.SslCertificate);
 
@@ -97,12 +100,12 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private async Task HandleQuit()
         {
-            await _connection.WriteString("221 Bye\r\n");
+            await SendCommandResult(new SmtpCommandResult(221, "Bye"));
         }
 
         private async Task HandleData()
         {
-            await _connection.WriteString("354 OK, send\r\n");
+            await SendLine("354 OK, send");
 
             _connection.SetTimeout(_configuration.DataCommandTimeout);
 
@@ -164,9 +167,9 @@ namespace hMailServer.Core.Protocols.SMTP
                 if (_configuration.SslCertificate != null)
                     response.AppendFormat("250-STARTTLS\r\n");
 
-                response.AppendFormat("250 HELP\r\n");
+                response.AppendFormat("250 HELP");
 
-                await _connection.WriteString(response.ToString());
+                await SendLine(response.ToString());
 
                 _state.HasHelo = true;
             }
@@ -189,9 +192,9 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private Task SendBanner()
         {
-            string banner = string.Format(CultureInfo.InvariantCulture, "220 {0} ESMTP\r\n", Environment.MachineName);
+            string banner = string.Format(CultureInfo.InvariantCulture, "220 {0} ESMTP", Environment.MachineName);
 
-            return _connection.WriteString(banner);
+            return SendLine(banner);
         }
 
         public Task<string> ReadUntilNewLine(IConnection connection)
@@ -204,11 +207,23 @@ namespace hMailServer.Core.Protocols.SMTP
             if (commandResult == null)
                 throw new ArgumentException("commandResult");
             
-            var message = $"{commandResult.Code} {commandResult.Message}\r\n";
-            await _connection.WriteString(message);
+            var message = $"{commandResult.Code} {commandResult.Message}";
+            await SendLine(message);
         }
 
+        private Task SendLine(string message)
+        {
+            _log.LogInfo(new LogEvent()
+            {
+                Message = message,
+                RemoteEndpoint = _connection.RemoteEndpoint,
+                SessionId = _connection.SessionId
+            });
 
+            return _connection.WriteString(message + "\r\n");
+        }
+
+        
     }
 
 }

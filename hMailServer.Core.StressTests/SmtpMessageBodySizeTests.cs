@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using hMailServer.Core.IntegrationTests;
+using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.SMTP;
 using NUnit.Framework;
 using hMailServer.Tests.Common;
@@ -38,7 +39,7 @@ namespace hMailServer.Core.StressTests
         public void Sending_10MB_MessageShouldSucceed()
         {
             SendMessageAndValidateContent(1024*1024*10);
-        }
+        }       
 
         [Test]
         public void Sending_100MB_MessageShouldSucceed()
@@ -71,7 +72,7 @@ namespace hMailServer.Core.StressTests
             var commandHandler = new InMemoryCommandHandler();
 
             Func<ISession> connectionFactory = () =>
-                new SmtpServerSession(commandHandler, new SmtpServerSessionConfiguration());
+                new SmtpServerSession(commandHandler, new NullLog(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration();
 

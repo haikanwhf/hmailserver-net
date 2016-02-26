@@ -9,5 +9,7 @@ namespace hMailServer.Core
         public int Port { get; set; } = 0;
 
         public X509Certificate2 SslCertificate { get; set; }
+
+        public ILog Log { get; set; }
     }
 }

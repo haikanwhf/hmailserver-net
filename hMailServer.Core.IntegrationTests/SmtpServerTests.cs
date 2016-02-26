@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.SMTP;
 using NUnit.Framework;
 
@@ -25,7 +26,7 @@ namespace hMailServer.Core.IntegrationTests
             var commandHandler = new InMemoryCommandHandler();
 
             Func<ISession> connectionFactory = () =>
-                new SmtpServerSession(commandHandler, new SmtpServerSessionConfiguration());
+                new SmtpServerSession(commandHandler, new NullLog(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration();
 
@@ -80,7 +81,7 @@ namespace hMailServer.Core.IntegrationTests
                 };
 
             Func<ISession> connectionFactory = () =>
-                new SmtpServerSession(commandHandler, smtpSessionConfiguration);
+                new SmtpServerSession(commandHandler, new NullLog(), smtpSessionConfiguration);
 
             var serverConfiguration = new ServerConfiguration();
 

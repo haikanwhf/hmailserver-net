@@ -2,6 +2,7 @@
 using System.Data;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
@@ -21,22 +22,27 @@ namespace hMailServer.Core
         private Stream _transferStream;
 
         private TimeSpan _currentTimeout = TimeSpan.FromSeconds(30);
-        
+
         public Connection(TcpClient tcpClient, CancellationToken cancellationToken)
         {
             _tcpClient = tcpClient;
-            
             _networkStream = _tcpClient.GetStream();
             _transferStream = _networkStream;
             
             _cancellationToken = cancellationToken;
+
+            SessionId = SessionIdGenerator.Generate();
         }
         
         public void SetTimeout(TimeSpan timeout)
         {
             _currentTimeout = timeout;
         }
-       
+
+        public IPEndPoint RemoteEndpoint => (IPEndPoint) _tcpClient.Client.RemoteEndPoint;
+
+        public string SessionId { get; }
+
         public async Task<string> ReadStringUntil(string delimiter)
         {
             byte[] dataReceived = new byte[1024];

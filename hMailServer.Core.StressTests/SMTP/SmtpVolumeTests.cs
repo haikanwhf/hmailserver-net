@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using hMailServer.Core.IntegrationTests;
+using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.SMTP;
 using NUnit.Framework;
 
@@ -20,7 +21,7 @@ namespace hMailServer.Core.StressTests.SMTP
         public void TestSendManyMessagesOnSeparateConnections()
         {
             Func<ISession> connectionFactory = () =>
-                new SmtpServerSession(new InMemoryCommandHandler(), new SmtpServerSessionConfiguration());
+                new SmtpServerSession(new InMemoryCommandHandler(), new NullLog(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration();
 
@@ -47,7 +48,7 @@ namespace hMailServer.Core.StressTests.SMTP
         public void TestSendManyMessagesOnSingleConnections()
         {
             Func<ISession> connectionFactory = () =>
-                new SmtpServerSession(new InMemoryCommandHandler(), new SmtpServerSessionConfiguration());
+                new SmtpServerSession(new InMemoryCommandHandler(), new NullLog(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration();
 

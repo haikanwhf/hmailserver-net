@@ -42,7 +42,10 @@
   <ItemGroup>
     <Compile Include="DisconnectedException.cs" />
     <Compile Include="IConnection.cs" />
+    <Compile Include="Logging\ILog.cs" />
     <Compile Include="ISession.cs" />
+    <Compile Include="Logging\LogEvent.cs" />
+    <Compile Include="Logging\NullLog.cs" />
     <Compile Include="MemoryStreamWithFileBacking.cs" />
     <Compile Include="Protocols\SMTP\CommandParser.cs" />
     <Compile Include="Protocols\SMTP\ISmtpServerCommandHandler.cs" />
@@ -57,6 +60,7 @@
     <Compile Include="Connection.cs" />
     <Compile Include="Protocols\SMTP\SmtpServerSessionConfiguration.cs" />
     <Compile Include="ServerConfiguration.cs" />
+    <Compile Include="SessionIdGenerator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

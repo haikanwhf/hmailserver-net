@@ -1,5 +1,6 @@
 ﻿using System;
 using hMailServer.Core;
+using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.SMTP;
 
 namespace hMailServer
@@ -9,7 +10,7 @@ namespace hMailServer
         static void Main(string[] args)
         {
             Func<ISession> connectionFactory = () => 
-                new SmtpServerSession(new NullCommandHandler(), new SmtpServerSessionConfiguration());
+                new SmtpServerSession(new NullCommandHandler(), new NullLog(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration()
                 {
