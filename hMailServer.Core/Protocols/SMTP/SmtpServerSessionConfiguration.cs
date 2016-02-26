@@ -12,7 +12,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
         public SmtpServerSessionConfiguration()
         {
-            EnvelopeCommandTimeout = TimeSpan.FromSeconds(5);
+            EnvelopeCommandTimeout = TimeSpan.FromMinutes(5);
             DataCommandTimeout = TimeSpan.FromMinutes(10);
         }
     }
