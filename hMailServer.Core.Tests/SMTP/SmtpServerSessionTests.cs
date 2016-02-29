@@ -47,7 +47,54 @@ namespace hMailServer.Core.Tests.SMTP
             commandHandlerMock.Verify(f => f.HandleData(It.Is<MemoryStreamWithFileBacking>(f2 => VerifyMemoryStreamContents(f2, "Hello World\r\n"))));
         }
 
+        [Test]
+        public void SmtpConversationShouldBeLogged()
+        {
+            var inMemoryLog = new InMemoryLog();
 
+            var commandHandlerMock = new Mock<ISmtpServerCommandHandler>();
+            commandHandlerMock.Setup(f => f.HandleHelo("example.com")).Returns(new SmtpCommandResult(250, "Ok"));
+            commandHandlerMock.Setup(f => f.HandleMailFrom("knafve@example.com")).Returns(new SmtpCommandResult(250, "Ok"));
+            commandHandlerMock.Setup(f => f.HandleRcptTo("knafve@example.com")).Returns(new SmtpCommandResult(250, "Ok"));
+            commandHandlerMock.Setup(f => f.HandleData(It.IsAny<MemoryStreamWithFileBacking>())).Returns(new SmtpCommandResult(250, "Ok"));
+
+            var data = "Hello World\r\n.\r\n";
+            var memory = new MemoryStream(Encoding.UTF8.GetBytes(data));
+
+            var connectionMock = ConnectionMockFactory.Create(new string[]
+                {
+                    "HELO example.com",
+                    "MAIL FROM: knafve@example.com",
+                    "RCPT TO: knafve@example.com",
+                    "DATA",
+                    "QUIT"
+                }, new[]
+                {
+                    memory
+                });
+
+            SmtpServerSession session = new SmtpServerSession(commandHandlerMock.Object, inMemoryLog, new SmtpServerSessionConfiguration());
+
+            var task = session.HandleConnection(connectionMock);
+            task.Wait();
+
+            var expectedLogEntries = new List<string>()
+                {
+                    "HELO example.com",
+                    "MAIL FROM: knafve@example.com",
+                    "RCPT TO: knafve@example.com",
+                    "DATA",
+                    "QUIT",
+
+                    "250 Ok"
+                };
+
+
+            foreach (var expectedLogEntry in expectedLogEntries)
+                Assert.IsTrue(inMemoryLog.LogEntries.Any(logEntry => logEntry.Item1.Message.Contains(expectedLogEntry)), expectedLogEntry);
+
+
+        }
 
         private bool VerifyMemoryStreamContents(Stream stream, string expectedText)
         {

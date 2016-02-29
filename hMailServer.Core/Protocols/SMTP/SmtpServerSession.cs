@@ -37,7 +37,14 @@ namespace hMailServer.Core.Protocols.SMTP
                     _connection.SetTimeout(_configuration.EnvelopeCommandTimeout);
 
                     var data = await ReadUntilNewLine(_connection);
-                   
+
+                    _log.LogInfo(new LogEvent()
+                        {
+                            Message = data,
+                            RemoteEndpoint = _connection.RemoteEndpoint,
+                            SessionId = _connection.SessionId
+                        });
+
                     var command = CommandParser.ParseCommand(data);
 
                     if (!_state.IsCommandValid(command))
