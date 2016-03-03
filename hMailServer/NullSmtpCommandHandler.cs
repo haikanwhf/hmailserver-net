@@ -5,7 +5,7 @@ using hMailServer.Core.Protocols.SMTP;
 
 namespace hMailServer
 {
-    public class NullCommandHandler : ISmtpServerCommandHandler
+    public class NullSmtpCommandHandler : ISmtpServerCommandHandler
     {
         private readonly List<string> _recipientAddress = new List<string>();
 

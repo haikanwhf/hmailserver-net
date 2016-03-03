@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.SMTP;
+using hMailServer.Core.Tests.Common;
 using Moq;
 using NUnit.Framework;
 
