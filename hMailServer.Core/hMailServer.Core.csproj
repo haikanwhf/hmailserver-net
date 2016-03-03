@@ -47,6 +47,12 @@
     <Compile Include="Logging\LogEvent.cs" />
     <Compile Include="Logging\NullLog.cs" />
     <Compile Include="MemoryStreamWithFileBacking.cs" />
+    <Compile Include="Protocols\IMAP\CommandParser.cs" />
+    <Compile Include="Protocols\IMAP\ImapCommand.cs" />
+    <Compile Include="Protocols\IMAP\IImapServerCommandHandler.cs" />
+    <Compile Include="Protocols\IMAP\ImapServerSessionConfiguration.cs" />
+    <Compile Include="Protocols\IMAP\ImapServerSessionState.cs" />
+    <Compile Include="Protocols\IMAP\ImapServerSesson.cs" />
     <Compile Include="Protocols\POP3\CommandParser.cs" />
     <Compile Include="Protocols\POP3\IPop3ServerCommandHandler.cs" />
     <Compile Include="Protocols\POP3\Pop3Command.cs" />
