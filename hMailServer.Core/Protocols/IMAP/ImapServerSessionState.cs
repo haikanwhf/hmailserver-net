@@ -1,6 +1,4 @@
-﻿using hMailServer.Core.Protocols.POP3;
-
-namespace hMailServer.Core.Protocols.IMAP
+﻿namespace hMailServer.Core.Protocols.IMAP
 {
     class ImapServerSessionState
     {

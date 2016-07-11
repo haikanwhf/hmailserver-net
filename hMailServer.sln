@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer", "hMailServer\hMailServer.csproj", "{9A760F44-E6D8-42B9-A644-F6B322E99B71}"
 EndProject
@@ -18,6 +18,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Common", "hMailServer.Common\hMailServer.Common.csproj", "{315466E7-DBB9-402C-BEA9-06EEAA596D35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Tests.Common", "hMailServer.Tests.Common\hMailServer.Tests.Common.csproj", "{C16ED617-4542-4C19-9F58-6AFF6819943B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Repository", "hMailServer.Repository\hMailServer.Repository.csproj", "{D3883CA7-99D2-4EF3-9239-C63D9FC346D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Entities", "hMailServer.Entities\hMailServer.Entities.csproj", "{4D1F88CB-B51B-4A3B-AC22-8CE9C2103B24}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Repository.MySQL", "hMailServer.Repository.MySQL\hMailServer.Repository.MySQL.csproj", "{FF4052BF-4CCA-4075-BCD5-4933F96604BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Repository.RelationalShared", "hMailServer.Repository.RelationalShared\hMailServer.Repository.RelationalShared.csproj", "{8D802CF4-7EB6-4837-9F18-2ED821513344}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +65,22 @@ Global
 		{C16ED617-4542-4C19-9F58-6AFF6819943B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C16ED617-4542-4C19-9F58-6AFF6819943B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C16ED617-4542-4C19-9F58-6AFF6819943B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3883CA7-99D2-4EF3-9239-C63D9FC346D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3883CA7-99D2-4EF3-9239-C63D9FC346D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3883CA7-99D2-4EF3-9239-C63D9FC346D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3883CA7-99D2-4EF3-9239-C63D9FC346D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D1F88CB-B51B-4A3B-AC22-8CE9C2103B24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D1F88CB-B51B-4A3B-AC22-8CE9C2103B24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D1F88CB-B51B-4A3B-AC22-8CE9C2103B24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D1F88CB-B51B-4A3B-AC22-8CE9C2103B24}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF4052BF-4CCA-4075-BCD5-4933F96604BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF4052BF-4CCA-4075-BCD5-4933F96604BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF4052BF-4CCA-4075-BCD5-4933F96604BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF4052BF-4CCA-4075-BCD5-4933F96604BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D802CF4-7EB6-4837-9F18-2ED821513344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D802CF4-7EB6-4837-9F18-2ED821513344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D802CF4-7EB6-4837-9F18-2ED821513344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D802CF4-7EB6-4837-9F18-2ED821513344}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

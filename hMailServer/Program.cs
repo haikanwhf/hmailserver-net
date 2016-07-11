@@ -10,12 +10,18 @@ namespace hMailServer
     {
         static void Main(string[] args)
         {
+            var mysqlRepositoryFactory = new hMailServer.Repository.MySQL.RepositoryFactory();
+
+            var accountRepo = mysqlRepositoryFactory.CreateAccountRepository("Server=localhost;Port=3306;Database=hmailserver;Uid=root;Pwd=secret");
+
+            var account = accountRepo.GetByName("martin@hmailserver.com").Result;
+            
             Func<ISession> smtpSessionFactory = () => 
-                new SmtpServerSession(new NullSmtpCommandHandler(), new NullLog(), new SmtpServerSessionConfiguration());
+                new SmtpServerSession(new NullSmtpCommandHandler(mysqlRepositoryFactory), new NullLog(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration()
                 {
-                    Port = 25
+                    Port = 250
                 };
 
             var smtpServer = new Server(smtpSessionFactory, serverConfiguration);
@@ -26,7 +32,7 @@ namespace hMailServer
 
             var pop3ServerConfiguration = new ServerConfiguration()
                 {
-                    Port = 250
+                    Port = 1100
                 };
 
             var pop3Server = new Server(pop3SessionFactory, pop3ServerConfiguration);

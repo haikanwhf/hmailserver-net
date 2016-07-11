@@ -66,12 +66,14 @@ namespace hMailServer.Core.Protocols.IMAP
         
         private async Task HandleRset()
         {
+            throw new NotImplementedException();
             //   await SendCommandResult(_commandHandler.HandleRset());
         }
 
         private async Task HandleQuit()
         {
-         //   await SendCommandResult(_commandHandler.HandleQuit());
+            throw new NotImplementedException();
+            //   await SendCommandResult(_commandHandler.HandleQuit());
         }
 
         private Task SendBanner()

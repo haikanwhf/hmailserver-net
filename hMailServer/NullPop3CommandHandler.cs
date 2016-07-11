@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using hMailServer.Core.Protocols.POP3;
-using hMailServer.Core.Protocols.SMTP;
+﻿using hMailServer.Core.Protocols.POP3;
 
 namespace hMailServer
 {
