@@ -20,7 +20,7 @@ namespace hMailServer.Core.Tests.POP3
         public void TestImmediateQuit()
         {
             var commandHandlerMock = new Mock<IPop3ServerCommandHandler>();
-            commandHandlerMock.Setup(f => f.HandleQuit()).Returns(new Pop3CommandResult(true, "Ok"));
+            commandHandlerMock.Setup(f => f.HandleQuit()).Returns(Task.Run(() => new Pop3CommandResult(true, "Ok")));
             
             var connectionMock = ConnectionMockFactory.Create(new[]
                 {

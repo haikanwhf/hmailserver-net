@@ -57,6 +57,8 @@ namespace hMailServer.Core.Protocols.SMTP
                     {
                         case SmtpCommand.Rset:
                             await HandleRset();
+                            _state.HasMailFrom = false;
+                            _state.HasRcptTo = false;
                             break;
                         case SmtpCommand.Helo:
                             await HandleHelo(data);
@@ -94,14 +96,14 @@ namespace hMailServer.Core.Protocols.SMTP
 
             await _connection.SslHandshakeAsServer(_configuration.SslCertificate);
 
-            _commandHandler.HandleRset();
+            await _commandHandler.HandleRset();
 
             _state.Reset();
         }
 
         private async Task HandleRset()
         {
-            var commandResult = _commandHandler.HandleRset();
+            var commandResult = await _commandHandler.HandleRset();
             await SendCommandResult(commandResult);
         }
 
@@ -132,7 +134,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
             transmissionBuffer.Flush();
 
-            var commandResult = _commandHandler.HandleData(target);
+            var commandResult = await _commandHandler.HandleData(target);
 
             await SendCommandResult(commandResult);
 
@@ -143,7 +145,7 @@ namespace hMailServer.Core.Protocols.SMTP
         private async Task HandleRcptTo(string data)
         {
             var rcptTo = CommandParser.ParseRcptTo(data);
-            var commandResult = _commandHandler.HandleRcptTo(rcptTo);
+            var commandResult = await _commandHandler.HandleRcptTo(rcptTo);
             await SendCommandResult(commandResult);
 
             if (commandResult.IsPositive())
@@ -153,7 +155,7 @@ namespace hMailServer.Core.Protocols.SMTP
         private async Task HandleMailFrom(string data)
         {
             var fromAddress = CommandParser.ParseMailFrom(data);
-            var commandResult = _commandHandler.HandleMailFrom(fromAddress);
+            var commandResult = await _commandHandler.HandleMailFrom(fromAddress);
 
             await SendCommandResult(commandResult);
             
@@ -164,7 +166,7 @@ namespace hMailServer.Core.Protocols.SMTP
         private async Task HandleEhlo(string data)
         {
             var ehloHostName = CommandParser.ParseEhlo(data);
-            var commandResult = _commandHandler.HandleEhlo(ehloHostName);
+            var commandResult = await _commandHandler.HandleEhlo(ehloHostName);
 
             if (commandResult.IsPositive())
             {
@@ -189,7 +191,7 @@ namespace hMailServer.Core.Protocols.SMTP
         private async Task HandleHelo(string data)
         {
             var heloHostName = CommandParser.ParseHelo(data);
-            var commandResult = _commandHandler.HandleHelo(heloHostName);
+            var commandResult = await _commandHandler.HandleHelo(heloHostName);
 
             await SendCommandResult(commandResult);
 

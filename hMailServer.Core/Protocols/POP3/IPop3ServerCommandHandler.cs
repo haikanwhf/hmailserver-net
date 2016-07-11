@@ -1,21 +1,22 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace hMailServer.Core.Protocols.POP3
 {
     public interface IPop3ServerCommandHandler
     {
-        Pop3CommandResult HandleQuit();
-        Pop3CommandResult HandleStat();
-        Pop3CommandResult HandleList();
-        Pop3CommandResult HandleRetr();
-        Pop3CommandResult HandleDele();
-        Pop3CommandResult HandleNoop();
-        Pop3CommandResult HandleRset();
-        Pop3CommandResult HandleTop();
-        Pop3CommandResult HandleUidl();
-        Pop3CommandResult HandleUser();
-        Pop3CommandResult HandlePass();
-        Pop3CommandResult HandleCapa();
-        Pop3CommandResult HandleStls();
+        Task<Pop3CommandResult> HandleQuit();
+        Task<Pop3CommandResult> HandleStat();
+        Task<Pop3CommandResult> HandleList();
+        Task<Pop3CommandResult> HandleRetr();
+        Task<Pop3CommandResult> HandleDele();
+        Task<Pop3CommandResult> HandleNoop();
+        Task<Pop3CommandResult> HandleRset();
+        Task<Pop3CommandResult> HandleTop();
+        Task<Pop3CommandResult> HandleUidl();
+        Task<Pop3CommandResult> HandleUser();
+        Task<Pop3CommandResult> HandlePass();
+        Task<Pop3CommandResult> HandleCapa();
+        Task<Pop3CommandResult> HandleStls();
     }
 }

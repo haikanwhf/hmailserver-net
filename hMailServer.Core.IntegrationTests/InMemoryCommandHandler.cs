@@ -16,7 +16,7 @@ namespace hMailServer.Core.IntegrationTests
         public List<string> Recipients { get; set; } = new List<string>();
         public Stream Body;
 
-        public SmtpCommandResult HandleRset()
+        public Task<SmtpCommandResult> HandleRset()
         {
             HeloHostname = null;
             EhloHostname = null;
@@ -26,31 +26,31 @@ namespace hMailServer.Core.IntegrationTests
             return SmtpCommandResult.Default250Success();  
         }
 
-        public SmtpCommandResult HandleHelo(string hostName)
+        public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
             HeloHostname = hostName;
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleEhlo(string hostName)
+        public Task<SmtpCommandResult> HandleEhlo(string hostName)
         {
             EhloHostname = hostName;
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleMailFrom(string fromAddress)
+        public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
         {
             MailFrom = fromAddress;
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleRcptTo(string recipientAddress)
+        public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
             Recipients.Add(recipientAddress);
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleData(Stream stream)
+        public Task<SmtpCommandResult> HandleData(Stream stream)
         {
             Body = stream;
 

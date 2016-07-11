@@ -82,12 +82,12 @@ namespace hMailServer.Core.Protocols.POP3
 
         private async Task HandleRset()
         {
-            await SendCommandResult(_commandHandler.HandleRset());
+            await SendCommandResult(await _commandHandler.HandleRset());
         }
 
         private async Task HandleQuit()
         {
-            await SendCommandResult(_commandHandler.HandleQuit());
+            await SendCommandResult(await _commandHandler.HandleQuit());
         }
 
         private Task SendBanner()

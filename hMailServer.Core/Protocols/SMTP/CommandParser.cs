@@ -10,6 +10,8 @@ namespace hMailServer.Core.Protocols.SMTP
         {
             command = command.ToLowerInvariant();
 
+            if (command.StartsWith("rset"))
+                return SmtpCommand.Rset;
             if (command.StartsWith("helo"))
                 return SmtpCommand.Helo;
             if (command.StartsWith("ehlo"))

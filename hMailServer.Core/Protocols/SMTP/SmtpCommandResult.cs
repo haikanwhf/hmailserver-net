@@ -22,9 +22,9 @@ namespace hMailServer.Core.Protocols.SMTP
             return Code >= 200 && Code <= 299;
         }
 
-        public static SmtpCommandResult Default250Success()
+        public static Task<SmtpCommandResult> Default250Success()
         {
-            return new SmtpCommandResult(250, "Ok.");
+            return Task.Run(() => new SmtpCommandResult(250, "Ok."));
         }
     }
 }

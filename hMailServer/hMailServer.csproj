@@ -35,6 +35,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="StructureMap, Version=4.2.0.402, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\structuremap.4.2.0.402\lib\net40\StructureMap.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="StructureMap.Net4, Version=4.2.0.402, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\structuremap.4.2.0.402\lib\net40\StructureMap.Net4.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -45,6 +53,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application\Configuration.cs" />
+    <Compile Include="Application\DependencyRegistry.cs" />
+    <Compile Include="Application\Factory.cs" />
     <Compile Include="NullPop3CommandHandler.cs" />
     <Compile Include="NullSmtpCommandHandler.cs" />
     <Compile Include="Program.cs" />
@@ -54,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\hMailServer.Core\hMailServer.Core.csproj">

@@ -1,14 +1,15 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace hMailServer.Core.Protocols.SMTP
 {
     public interface ISmtpServerCommandHandler
     {
-        SmtpCommandResult HandleRset();
-        SmtpCommandResult HandleHelo(string hostName);
-        SmtpCommandResult HandleEhlo(string hostName);
-        SmtpCommandResult HandleMailFrom(string fromAddress);
-        SmtpCommandResult HandleRcptTo(string recipientAddress);
-        SmtpCommandResult HandleData(Stream stream);
+        Task<SmtpCommandResult> HandleRset();
+        Task<SmtpCommandResult> HandleHelo(string hostName);
+        Task<SmtpCommandResult> HandleEhlo(string hostName);
+        Task<SmtpCommandResult> HandleMailFrom(string fromAddress);
+        Task<SmtpCommandResult> HandleRcptTo(string recipientAddress);
+        Task<SmtpCommandResult> HandleData(Stream stream);
     }
 }

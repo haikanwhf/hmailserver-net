@@ -26,7 +26,7 @@ namespace hMailServer.Repository.MySQL
                         accountaddress = address
                     });
 
-                var account = accounts.Single();
+                var account = accounts.SingleOrDefault();
 
                 return account;
             }

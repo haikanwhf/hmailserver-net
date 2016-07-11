@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
+using hMailServer.Application;
 using hMailServer.Core.Protocols.SMTP;
+using hMailServer.Repository;
+using StructureMap;
 
 namespace hMailServer.Protocols.SMTP
 {
@@ -8,35 +12,47 @@ namespace hMailServer.Protocols.SMTP
     {
         private readonly SmtpServerSessionState _state = new SmtpServerSessionState();
 
-        public SmtpCommandResult HandleRset()
+        private readonly Container _container;
+
+        public SmtpServerCommandHandler(Container container)
+        {
+            _container = container;
+        }
+
+        public Task<SmtpCommandResult> HandleRset()
         {
             _state.HandleRset();
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleHelo(string hostName)
+        public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleEhlo(string hostName)
+        public Task<SmtpCommandResult> HandleEhlo(string hostName)
         {
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleMailFrom(string fromAddress)
+        public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
         {
+            var accountRepository = _container.GetInstance<IAccountRepository>();
+            var account = accountRepository.GetByName(fromAddress).Result;
+
+            bool isLocalAccount = account != null;
+
             _state.FromAddress = fromAddress;
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleRcptTo(string recipientAddress)
+        public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
             _state.Recipients.Add(recipientAddress);
             return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleData(Stream stream)
+        public Task<SmtpCommandResult> HandleData(Stream stream)
         {
             string fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 

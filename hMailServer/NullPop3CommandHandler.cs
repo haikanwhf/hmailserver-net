@@ -1,70 +1,71 @@
-﻿using hMailServer.Core.Protocols.POP3;
+﻿using System.Threading.Tasks;
+using hMailServer.Core.Protocols.POP3;
 
 namespace hMailServer
 {
     public class NullPop3CommandHandler : IPop3ServerCommandHandler
     {
-        public Pop3CommandResult HandleQuit()
+        public Task<Pop3CommandResult> HandleQuit()
+        {
+            return Task.Run(() => new Pop3CommandResult(true, "Goodbye"));
+        }
+
+        public Task<Pop3CommandResult> HandleStat()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleStat()
+        public Task<Pop3CommandResult> HandleList()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleList()
+        public Task<Pop3CommandResult> HandleRetr()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleRetr()
+        public Task<Pop3CommandResult> HandleDele()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleDele()
+        public Task<Pop3CommandResult> HandleNoop()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleNoop()
+        public Task<Pop3CommandResult> HandleRset()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleRset()
+        public Task<Pop3CommandResult> HandleTop()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleTop()
+        public Task<Pop3CommandResult> HandleUidl()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleUidl()
+        public Task<Pop3CommandResult> HandleUser()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleUser()
+        public Task<Pop3CommandResult> HandlePass()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandlePass()
+        public Task<Pop3CommandResult> HandleCapa()
         {
             throw new System.NotImplementedException();
         }
 
-        public Pop3CommandResult HandleCapa()
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public Pop3CommandResult HandleStls()
+        public Task<Pop3CommandResult> HandleStls()
         {
             throw new System.NotImplementedException();
         }

@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Security.Cryptography.X509Certificates;
+using hMailServer.Application;
 using hMailServer.Core;
 using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.POP3;
 using hMailServer.Core.Protocols.SMTP;
+using hMailServer.Protocols.SMTP;
+using hMailServer.Repository.MySQL;
+using StructureMap;
 
 namespace hMailServer
 {
@@ -10,14 +15,15 @@ namespace hMailServer
     {
         static void Main(string[] args)
         {
-            var mysqlRepositoryFactory = new hMailServer.Repository.MySQL.RepositoryFactory();
-
-            var accountRepo = mysqlRepositoryFactory.CreateAccountRepository("Server=localhost;Port=3306;Database=hmailserver;Uid=root;Pwd=secret");
-
-            var account = accountRepo.GetByName("martin@hmailserver.com").Result;
+            var config = new Configuration()
+                {
+                    DatabaseConnectionString = "Server=localhost;Port=3306;Database=hmailserver;Uid=root;Pwd=Secret12"
+                };
             
+            var container = new Container(new DependencyRegistry(config));
+
             Func<ISession> smtpSessionFactory = () => 
-                new SmtpServerSession(new NullSmtpCommandHandler(mysqlRepositoryFactory), new NullLog(), new SmtpServerSessionConfiguration());
+                new SmtpServerSession(new SmtpServerCommandHandler(container), new NullLog(), new SmtpServerSessionConfiguration());
 
             var serverConfiguration = new ServerConfiguration()
                 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-
+using System.Threading.Tasks;
 using hMailServer.Core.Protocols.SMTP;
 using hMailServer.Repository;
 
@@ -17,38 +17,35 @@ namespace hMailServer
             _repositoryFactory = repositoryFactory;
         }
 
-        public SmtpCommandResult HandleRset()
+        public Task<SmtpCommandResult> HandleRset()
         {
-            return new SmtpCommandResult(250, "Ok.");
+            return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleHelo(string hostName)
+        public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
-            return new SmtpCommandResult(250, "Hello.");
+            return SmtpCommandResult.Default250Success();
+        }
+        
+        public Task<SmtpCommandResult> HandleEhlo(string hostName)
+        {
+            return SmtpCommandResult.Default250Success();
         }
 
-
-        public SmtpCommandResult HandleEhlo(string hostName)
+        public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
         {
-            return new SmtpCommandResult(250, "Ok.");
+            return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleMailFrom(string fromAddress)
-        {
-
-
-            return new SmtpCommandResult(250, "Ok.");
-        }
-
-        public SmtpCommandResult HandleRcptTo(string recipientAddress)
+        public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
             _recipientAddress.Add(recipientAddress);
-            return new SmtpCommandResult(250, "Ok.");
+            return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleData(Stream stream)
+        public Task<SmtpCommandResult> HandleData(Stream stream)
         {
-            return new SmtpCommandResult(250, "Ok.");
+            return SmtpCommandResult.Default250Success();
         }
 
     }

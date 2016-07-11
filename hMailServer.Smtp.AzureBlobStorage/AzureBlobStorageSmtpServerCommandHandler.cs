@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.IO;
+using System.Threading.Tasks;
 using System.Web;
 using hMailServer.Core.Protocols.SMTP;
 using Microsoft.WindowsAzure.Storage;
@@ -21,28 +22,28 @@ namespace hMailServer.Smtp.AzureBlobStorage
 
         }
 
-        public SmtpCommandResult HandleRset()
+        public Task<SmtpCommandResult> HandleRset()
         {
-            return new SmtpCommandResult(250, "Hello.");
+            return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleHelo(string hostName)
+        public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
-            return new SmtpCommandResult(250, "Ok.");
+            return SmtpCommandResult.Default250Success();
         }
         
-        public SmtpCommandResult HandleEhlo(string hostName)
+        public Task<SmtpCommandResult> HandleEhlo(string hostName)
         {
-            return new SmtpCommandResult(250, "Ok.");
+            return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleMailFrom(string fromAddress)
+        public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
         {
             _fromAddress = fromAddress;
-            return new SmtpCommandResult(250, "Ok.");
+            return SmtpCommandResult.Default250Success();
         }
 
-        public SmtpCommandResult HandleRcptTo(string recipientAddress)
+        public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
             var blobClient = _storageAccount.CreateCloudBlobClient();
             var recipientsContainer = blobClient.GetContainerReference("recipients");
@@ -50,12 +51,12 @@ namespace hMailServer.Smtp.AzureBlobStorage
             var recipientBlob = recipientsContainer.GetBlockBlobReference(recipientAddress);
 
             if (recipientBlob.Exists())
-                return new SmtpCommandResult(250, "Ok.");
+                return SmtpCommandResult.Default250Success();
             else
-                return new SmtpCommandResult(550, "No such user");
+                return Task.Run(() => new SmtpCommandResult(550, "No suchu ser."));
         }
 
-        public SmtpCommandResult HandleData(Stream stream)
+        public Task<SmtpCommandResult> HandleData(Stream stream)
         {
             var blobClient = _storageAccount.CreateCloudBlobClient();
             var mailContainer = blobClient.GetContainerReference("mail");
@@ -63,7 +64,8 @@ namespace hMailServer.Smtp.AzureBlobStorage
             var mailBlob = mailContainer.GetBlockBlobReference(mailBlobName);
 
             mailBlob.UploadFromStream(stream);
-            return new SmtpCommandResult(250, "Ok.");
+
+            return SmtpCommandResult.Default250Success();
         }
 
     }
