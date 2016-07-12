@@ -16,7 +16,7 @@ namespace hMailServer.Smtp.AzureBlobStorage
             Func<ISession> connectionFactory = () =>
                 new SmtpServerSession(new AzureBlobStorageSmtpServerCommandHandler(), new NullLog(), new SmtpServerSessionConfiguration());
 
-            var smtpServer = new Server(connectionFactory, new ServerConfiguration());
+            var smtpServer = new Server(connectionFactory, new NullLog(), new ServerConfiguration());
 
             var task = smtpServer.RunAsync();
 

@@ -16,9 +16,9 @@ namespace hMailServer.Core.Tests
             LogEntries.Add(new Tuple<LogEvent, Exception>(logEvent, null));
         }
 
-        public void LogException(LogEvent logEvent, Exception ex)
+        public void LogException(LogEvent logEvent, Exception exception)
         {
-            LogEntries.Add(new Tuple<LogEvent, Exception>(logEvent, ex));
+            LogEntries.Add(new Tuple<LogEvent, Exception>(logEvent, exception));
         }
     }
 }

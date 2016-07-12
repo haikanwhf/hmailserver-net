@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using hMailServer.Core.Logging;
 
 namespace hMailServer.Core
 {
@@ -13,12 +13,14 @@ namespace hMailServer.Core
         private readonly Func<ISession> _sessionFactory;
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private readonly ServerConfiguration _configuration;
+        private readonly ILog _log;
 
-        public Server(Func<ISession> sessionFactory, ServerConfiguration serverConfiguration)
+        public Server(Func<ISession> sessionFactory, ILog log, ServerConfiguration serverConfiguration)
         {
             _sessionFactory = sessionFactory;
             _configuration = serverConfiguration;
             _listener = new TcpListener(serverConfiguration.IpAddress, serverConfiguration.Port);
+            _log = log;
         }
 
         public IPEndPoint LocalEndpoint => 
@@ -50,13 +52,37 @@ namespace hMailServer.Core
 
                 var sessionTask = session.HandleConnection(connection);
 
-                sessionTask.ContinueWith(f =>
-                    {
-                        // Session has ended.
-                        connection.Dispose();
-                    });
+                HandleSessionAsynchronously(sessionTask, connection, session);
             }
         }
+
+        /// <summary>
+        /// When session has completed, log any error which occured and dispose resources. This is done asynchronously
+        /// sincew we want to be able to start new session without previous to complete.
+        /// </summary>
+        private void HandleSessionAsynchronously(Task sessionTask, Connection connection, ISession session)
+        {
+            sessionTask.ContinueWith(f =>
+            {
+                if (f.IsFaulted)
+                {
+                    var exception = f.Exception.InnerException;
+
+                    _log.LogException(new LogEvent()
+                    {
+                        LogLevel = LogLevel.Error,
+                        EventType = LogEventType.Application,
+                        Message = exception.Message,
+                        RemoteEndpoint = connection.RemoteEndpoint,
+                        SessionId = connection.SessionId,
+                        Protocol = session.ProtocolName
+                    }, exception);
+                }
+
+                // Session has ended.
+                connection.Dispose();
+            });
+       }
 
         public async Task StopAsync()
         {

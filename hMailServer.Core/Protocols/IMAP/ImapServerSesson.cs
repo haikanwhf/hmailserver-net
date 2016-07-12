@@ -63,7 +63,9 @@ namespace hMailServer.Core.Protocols.IMAP
                 // Connection gone.
             }
         }
-        
+
+        public string ProtocolName => "IMAPD";
+
         private async Task HandleRset()
         {
             throw new NotImplementedException();

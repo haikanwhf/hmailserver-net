@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using Dapper;
 using hMailServer.Repository.RelationalShared;
+using MySql.Data.MySqlClient;
 
 namespace hMailServer.Repository.MySQL
 {
     public class RepositoryFactory : IRepositoryFactory
     {
-        public RepositoryFactory()
+        static RepositoryFactory()
         {
             var mappings = TypeColumnMappings.Create();
 
@@ -32,9 +33,23 @@ namespace hMailServer.Repository.MySQL
             }
         }
 
-        public IAccountRepository CreateAccountRepository(string connectionString)
+        private readonly string _connectionString;
+        
+        public RepositoryFactory(DatabaseConfiguration databaseConfiguration)
         {
-            return new AccountRepository(connectionString);
+            var connectionStringBuilder = new MySqlConnectionStringBuilder();
+            connectionStringBuilder.UserID = databaseConfiguration.Username;
+            connectionStringBuilder.Password = databaseConfiguration.Password;
+            connectionStringBuilder.Server = databaseConfiguration.Server;
+            connectionStringBuilder.Database = databaseConfiguration.Database;
+            connectionStringBuilder.Port = databaseConfiguration.Port;
+
+            _connectionString = connectionStringBuilder.ToString();
+        }
+
+        public IAccountRepository CreateAccountRepository()
+        {
+            return new AccountRepository(_connectionString);
         }
     }
 }

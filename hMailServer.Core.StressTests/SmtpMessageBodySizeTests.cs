@@ -76,7 +76,7 @@ namespace hMailServer.Core.StressTests
 
             var serverConfiguration = new ServerConfiguration();
 
-            var smtpServer = new Server(connectionFactory, serverConfiguration);
+            var smtpServer = new Server(connectionFactory, new NullLog(),  serverConfiguration);
             var runTask = smtpServer.RunAsync();
             
             var stopwatch = new Stopwatch();

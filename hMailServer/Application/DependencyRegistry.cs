@@ -1,4 +1,5 @@
-﻿using hMailServer.Repository;
+﻿using hMailServer.Configuration;
+using hMailServer.Repository;
 using hMailServer.Repository.MySQL;
 using StructureMap;
 
@@ -6,12 +7,12 @@ namespace hMailServer.Application
 {
     class DependencyRegistry : Registry
     {
-        public DependencyRegistry(Configuration configuration)
+        public DependencyRegistry(ServiceConfiguration serviceConfiguration)
         {
-            var repositoryFactory = new RepositoryFactory();
+            var repositoryFactory = new RepositoryFactory(serviceConfiguration.DatabaseConfiguration);
 
             For<IAccountRepository>()
-                .Use(() => repositoryFactory.CreateAccountRepository(configuration.DatabaseConnectionString));
+                .Use(() => repositoryFactory.CreateAccountRepository());
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
-using hMailServer.Application;
 using hMailServer.Core.Protocols.SMTP;
 using hMailServer.Repository;
 using StructureMap;

@@ -45,6 +45,8 @@
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="Logging\LogEvent.cs" />
+    <Compile Include="Logging\LogEventType.cs" />
+    <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="Logging\NullLog.cs" />
     <Compile Include="MemoryStreamWithFileBacking.cs" />
     <Compile Include="Protocols\IMAP\CommandParser.cs" />

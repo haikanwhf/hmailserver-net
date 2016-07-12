@@ -13,7 +13,7 @@ namespace hMailServer.Core.Logging
 
         }
 
-        public void LogException(LogEvent @event, Exception ex)
+        public void LogException(LogEvent @event, Exception exception)
         {
 
         }

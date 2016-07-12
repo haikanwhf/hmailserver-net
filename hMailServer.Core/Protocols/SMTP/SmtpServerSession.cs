@@ -24,6 +24,8 @@ namespace hMailServer.Core.Protocols.SMTP
             _log = log;
         }
 
+        public string ProtocolName => "SMTPD";
+
         public async Task HandleConnection(IConnection connection)
         {
             _connection = connection;

@@ -2,6 +2,6 @@
 {
    public interface IRepositoryFactory
    {
-      IAccountRepository CreateAccountRepository(string connectionString);
+      IAccountRepository CreateAccountRepository();
    }
 }

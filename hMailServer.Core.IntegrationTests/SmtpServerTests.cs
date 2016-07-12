@@ -30,7 +30,7 @@ namespace hMailServer.Core.IntegrationTests
 
             var serverConfiguration = new ServerConfiguration();
 
-            var smtpServer = new Server(connectionFactory, serverConfiguration);
+            var smtpServer = new Server(connectionFactory, new NullLog(), serverConfiguration);
             var runTask = smtpServer.RunAsync();
 
             using (var message = new MailMessage())
@@ -85,7 +85,7 @@ namespace hMailServer.Core.IntegrationTests
 
             var serverConfiguration = new ServerConfiguration();
 
-            var smtpServer = new Server(connectionFactory, serverConfiguration);
+            var smtpServer = new Server(connectionFactory, new NullLog(), serverConfiguration);
             var runTask = smtpServer.RunAsync();
 
             using (var message = new MailMessage())

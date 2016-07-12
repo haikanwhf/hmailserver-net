@@ -9,5 +9,7 @@ namespace hMailServer.Core
     public interface ISession
     {
         Task HandleConnection(IConnection connection);
+
+        string ProtocolName { get; }
     }
 }

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Net;
 
 namespace hMailServer.Core.Logging
 {
     public class LogEvent
     {
+        public LogLevel LogLevel { get; set; }
+        public string Protocol { get; set; }
+        public LogEventType EventType { get; set; }
         public IPEndPoint RemoteEndpoint { get; set; }
         public string SessionId { get; set; }
         public string Message { get; set; }

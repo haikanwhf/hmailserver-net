@@ -25,7 +25,7 @@ namespace hMailServer.Core.StressTests.SMTP
 
             var serverConfiguration = new ServerConfiguration();
 
-            var smtpServer = new Server(connectionFactory, serverConfiguration);
+            var smtpServer = new Server(connectionFactory, new NullLog(), serverConfiguration);
             var runTask = smtpServer.RunAsync();
 
             var throttler = new SemaphoreSlim(initialCount: 5);
@@ -52,7 +52,7 @@ namespace hMailServer.Core.StressTests.SMTP
 
             var serverConfiguration = new ServerConfiguration();
 
-            var smtpServer = new Server(connectionFactory, serverConfiguration);
+            var smtpServer = new Server(connectionFactory, new NullLog(), serverConfiguration);
             var runTask = smtpServer.RunAsync();
             
             using (var client = new SmtpClient(smtpServer.LocalEndpoint.Address.ToString(), smtpServer.LocalEndpoint.Port))
