@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -15,7 +14,7 @@ namespace hMailServer.Core.Protocols.SMTP
         private readonly SmtpServerSessionState _state = new SmtpServerSessionState();
         private readonly SmtpServerSessionConfiguration _configuration;
         private const int DataTransferMemoryBufferMaxSize = 1024*30;
-        private ILog _log;
+        private readonly ILog _log;
 
         public SmtpServerSession(ISmtpServerCommandHandler commandHandler, ILog log, SmtpServerSessionConfiguration configuration)
         {
@@ -24,7 +23,7 @@ namespace hMailServer.Core.Protocols.SMTP
             _log = log;
         }
 
-        public string ProtocolName => "SMTPD";
+        public Protocol Protocol => Protocol.SMTPD;
 
         public async Task HandleConnection(IConnection connection)
         {
@@ -120,28 +119,29 @@ namespace hMailServer.Core.Protocols.SMTP
 
             _connection.SetTimeout(_configuration.DataCommandTimeout);
 
-            var target = new MemoryStreamWithFileBacking(DataTransferMemoryBufferMaxSize);
-
-            var transmissionBuffer = new TransmissionBuffer(target);
-            
-            while (!transmissionBuffer.TransmissionEnded)
+            using (var target = new MemoryStreamWithFileBacking(DataTransferMemoryBufferMaxSize))
             {
-                using (var maildata = await _connection.Read())
+                var transmissionBuffer = new TransmissionBuffer(target);
+
+                while (!transmissionBuffer.TransmissionEnded)
                 {
-                    maildata.Seek(0, SeekOrigin.Begin);
-                    
-                    transmissionBuffer.Append(maildata);
+                    using (var maildata = await _connection.Read())
+                    {
+                        maildata.Seek(0, SeekOrigin.Begin);
+
+                        transmissionBuffer.Append(maildata);
+                    }
                 }
+
+                transmissionBuffer.Flush();
+
+                var commandResult = await _commandHandler.HandleData(target);
+
+                await SendCommandResult(commandResult);
+
+                _state.HasMailFrom = false;
+                _state.HasRcptTo = false;
             }
-
-            transmissionBuffer.Flush();
-
-            var commandResult = await _commandHandler.HandleData(target);
-
-            await SendCommandResult(commandResult);
-
-            _state.HasMailFrom = false;
-            _state.HasRcptTo = false;
         }
 
         private async Task HandleRcptTo(string data)
@@ -157,6 +157,14 @@ namespace hMailServer.Core.Protocols.SMTP
         private async Task HandleMailFrom(string data)
         {
             var fromAddress = CommandParser.ParseMailFrom(data);
+            // BREAKING: Option Allow Mail From Null removed.
+
+            if (!EmailAddressParser.IsValidEmailAddress(fromAddress))
+            {
+                await SendCommandResult(new SmtpCommandResult(550, "The address is not valid"));
+                return;
+            }
+            
             var commandResult = await _commandHandler.HandleMailFrom(fromAddress);
 
             await SendCommandResult(commandResult);
@@ -203,7 +211,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private Task SendBanner()
         {
-            string banner = string.Format(CultureInfo.InvariantCulture, "220 {0} ESMTP", Environment.MachineName);
+            string banner = string.Format(CultureInfo.InvariantCulture, "220 {0} ESMTP", _configuration.HostName);
 
             return SendLine(banner);
         }

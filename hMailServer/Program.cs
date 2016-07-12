@@ -25,7 +25,7 @@ namespace hMailServer
 
             var serverConfiguration = new ServerConfiguration()
                 {
-                    Port = 250
+                    Port = 25
                 };
 
             var smtpServer = new Server(smtpSessionFactory, log, serverConfiguration);
@@ -36,7 +36,7 @@ namespace hMailServer
 
             var pop3ServerConfiguration = new ServerConfiguration()
                 {
-                    Port = 1100
+                    Port = 110
                 };
 
             var pop3Server = new Server(pop3SessionFactory, log, pop3ServerConfiguration);

@@ -21,17 +21,17 @@ namespace hMailServer.Protocols.SMTP
         public Task<SmtpCommandResult> HandleRset()
         {
             _state.HandleRset();
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleEhlo(string hostName)
         {
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
@@ -42,13 +42,13 @@ namespace hMailServer.Protocols.SMTP
             bool isLocalAccount = account != null;
 
             _state.FromAddress = fromAddress;
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
             _state.Recipients.Add(recipientAddress);
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleData(Stream stream)
@@ -60,7 +60,7 @@ namespace hMailServer.Protocols.SMTP
                 stream.CopyTo(fileStream);
             }
 
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
     }
 }

@@ -22,13 +22,13 @@ namespace hMailServer.Application
         {
             LogInfo(new LogEvent
             {
-                    Message = message,
-                    EventType = LogEventType.Application,
-                    Protocol = null,
-                    RemoteEndpoint = null,
-                    SessionId = null,
-                    LogLevel = LogLevel.Info
-                });
+                Message = message,
+                EventType = LogEventType.Application,
+                Protocol = null,
+                RemoteEndpoint = null,
+                SessionId = null,
+                LogLevel = LogLevel.Info
+            });
         }
 
         public void LogException(LogEvent logEvent, Exception exception)

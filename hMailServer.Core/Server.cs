@@ -52,6 +52,8 @@ namespace hMailServer.Core
 
                 var sessionTask = session.HandleConnection(connection);
 
+                SessionManager.IncreaseSessionCount(session.Protocol);
+
                 HandleSessionAsynchronously(sessionTask, connection, session);
             }
         }
@@ -75,9 +77,11 @@ namespace hMailServer.Core
                         Message = exception.Message,
                         RemoteEndpoint = connection.RemoteEndpoint,
                         SessionId = connection.SessionId,
-                        Protocol = session.ProtocolName
+                        Protocol = session.Protocol.ToString()
                     }, exception);
                 }
+
+                SessionManager.DecreaseSessionCount(session.Protocol);
 
                 // Session has ended.
                 connection.Dispose();

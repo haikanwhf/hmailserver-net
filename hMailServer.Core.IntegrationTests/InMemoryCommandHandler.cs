@@ -14,7 +14,7 @@ namespace hMailServer.Core.IntegrationTests
         public string EhloHostname { get; set; }
         public string MailFrom { get; set; }
         public List<string> Recipients { get; set; } = new List<string>();
-        public Stream Body;
+        public MemoryStream Body = new MemoryStream();
 
         public Task<SmtpCommandResult> HandleRset()
         {
@@ -23,38 +23,39 @@ namespace hMailServer.Core.IntegrationTests
             MailFrom = null;
             Recipients = new List<string>();
         
-            return SmtpCommandResult.Default250Success();  
+            return SmtpCommandResult.Default250SuccessTask();  
         }
 
         public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
             HeloHostname = hostName;
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleEhlo(string hostName)
         {
             EhloHostname = hostName;
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
         {
             MailFrom = fromAddress;
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
             Recipients.Add(recipientAddress);
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleData(Stream stream)
         {
-            Body = stream;
+            stream.CopyTo(Body);
+            Body.Seek(0, SeekOrigin.Begin);
 
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
     }
 }

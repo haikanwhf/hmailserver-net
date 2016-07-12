@@ -40,7 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConnectionSecurity.cs" />
     <Compile Include="DisconnectedException.cs" />
+    <Compile Include="EmailAddressParser.cs" />
     <Compile Include="IConnection.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="ISession.cs" />
@@ -62,6 +64,7 @@
     <Compile Include="Protocols\POP3\Pop3ServerSesson.cs" />
     <Compile Include="Protocols\POP3\Pop3ServerSessionConfiguration.cs" />
     <Compile Include="Protocols\POP3\Pop3ServerSessionState.cs" />
+    <Compile Include="Protocols\Protocol.cs" />
     <Compile Include="Protocols\SMTP\CommandParser.cs" />
     <Compile Include="Protocols\SMTP\ISmtpServerCommandHandler.cs" />
     <Compile Include="Protocols\SMTP\SmtpCommand.cs" />
@@ -76,6 +79,7 @@
     <Compile Include="Protocols\SMTP\SmtpServerSessionConfiguration.cs" />
     <Compile Include="ServerConfiguration.cs" />
     <Compile Include="SessionIdGenerator.cs" />
+    <Compile Include="SessionManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

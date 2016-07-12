@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using hMailServer.Core.Protocols;
 
 namespace hMailServer.Core
 {
@@ -10,6 +7,6 @@ namespace hMailServer.Core
     {
         Task HandleConnection(IConnection connection);
 
-        string ProtocolName { get; }
+        Protocol Protocol { get; }
     }
 }

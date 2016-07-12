@@ -24,7 +24,7 @@ namespace hMailServer.Core.Protocols.POP3
             _log = log;
         }
 
-        public string ProtocolName => "POP3D";
+        public Protocol Protocol => Protocol.POP3D;
 
         public async Task HandleConnection(IConnection connection)
         {

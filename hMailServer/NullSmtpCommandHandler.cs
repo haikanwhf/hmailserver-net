@@ -19,33 +19,33 @@ namespace hMailServer
 
         public Task<SmtpCommandResult> HandleRset()
         {
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
         
         public Task<SmtpCommandResult> HandleEhlo(string hostName)
         {
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
         {
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
             _recipientAddress.Add(recipientAddress);
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleData(Stream stream)
         {
-            return SmtpCommandResult.Default250Success();
+            return SmtpCommandResult.Default250SuccessTask();
         }
 
     }

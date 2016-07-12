@@ -64,7 +64,7 @@ namespace hMailServer.Core.Protocols.IMAP
             }
         }
 
-        public string ProtocolName => "IMAPD";
+        public Protocol Protocol => Protocol.IMAPD;
 
         private async Task HandleRset()
         {
