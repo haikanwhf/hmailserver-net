@@ -19,14 +19,14 @@ namespace hMailServer.Core.Tests.SMTP
         public void TestCompleteSmtpServerSession()
         {
             var commandHandlerMock = new Mock<ISmtpServerCommandHandler>();
-            commandHandlerMock.Setup(f => f.HandleHelo("example.com")).Returns(SmtpCommandResult.Default250SuccessTask);
-            commandHandlerMock.Setup(f => f.HandleMailFrom("knafve@example.com")).Returns(SmtpCommandResult.Default250SuccessTask);
-            commandHandlerMock.Setup(f => f.HandleRcptTo("knafve@example.com")).Returns(SmtpCommandResult.Default250SuccessTask);
+            commandHandlerMock.Setup(f => f.HandleHelo("example.com")).Returns(SmtpCommandResult.CreateDefault250SuccessTask);
+            commandHandlerMock.Setup(f => f.HandleMailFrom("knafve@example.com")).Returns(SmtpCommandResult.CreateDefault250SuccessTask);
+            commandHandlerMock.Setup(f => f.HandleRcptTo("knafve@example.com")).Returns(SmtpCommandResult.CreateDefault250SuccessTask);
 
             commandHandlerMock.Setup(f => f.HandleData(It.IsAny<MemoryStreamWithFileBacking>()))
                 .Callback((Stream stream) =>
                     VerifyMemoryStreamContents(stream, "Hello World\r\n"))
-                .Returns(SmtpCommandResult.Default250SuccessTask());
+                .Returns(SmtpCommandResult.CreateDefault250SuccessTask());
 
             var data = "Hello World\r\n.\r\n";
             var memory = new MemoryStream(Encoding.UTF8.GetBytes(data));
@@ -57,10 +57,10 @@ namespace hMailServer.Core.Tests.SMTP
             var inMemoryLog = new InMemoryLog();
 
             var commandHandlerMock = new Mock<ISmtpServerCommandHandler>();
-            commandHandlerMock.Setup(f => f.HandleHelo("example.com")).Returns(SmtpCommandResult.Default250SuccessTask);
-            commandHandlerMock.Setup(f => f.HandleMailFrom("knafve@example.com")).Returns(SmtpCommandResult.Default250SuccessTask);
-            commandHandlerMock.Setup(f => f.HandleRcptTo("knafve@example.com")).Returns(SmtpCommandResult.Default250SuccessTask);
-            commandHandlerMock.Setup(f => f.HandleData(It.IsAny<MemoryStreamWithFileBacking>())).Returns(SmtpCommandResult.Default250SuccessTask);
+            commandHandlerMock.Setup(f => f.HandleHelo("example.com")).Returns(SmtpCommandResult.CreateDefault250SuccessTask);
+            commandHandlerMock.Setup(f => f.HandleMailFrom("knafve@example.com")).Returns(SmtpCommandResult.CreateDefault250SuccessTask);
+            commandHandlerMock.Setup(f => f.HandleRcptTo("knafve@example.com")).Returns(SmtpCommandResult.CreateDefault250SuccessTask);
+            commandHandlerMock.Setup(f => f.HandleData(It.IsAny<MemoryStreamWithFileBacking>())).Returns(SmtpCommandResult.CreateDefault250SuccessTask);
 
             var data = "Hello World\r\n.\r\n";
             var memory = new MemoryStream(Encoding.UTF8.GetBytes(data));

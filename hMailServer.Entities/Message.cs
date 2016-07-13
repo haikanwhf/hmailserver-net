@@ -18,5 +18,7 @@ namespace hMailServer.Entities
         public bool Locked { get; set; }
         public DateTime CreateTime { get; set; }
         public DateTime NextDeliveryAttempt { get; set; }
+
+        public List<Recipient> Recipients { get; set; }
     }
 }

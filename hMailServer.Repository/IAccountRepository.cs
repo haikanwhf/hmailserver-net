@@ -5,6 +5,6 @@ namespace hMailServer.Repository
 {
     public interface IAccountRepository
     {
-       Task<Account> GetByName(string address);
+       Task<Account> GetByNameAsync(string address);
     }
 }

@@ -15,7 +15,7 @@ namespace hMailServer.Repository.MySQL
             _connectionString = connectionString;
         }
 
-        public async Task<Account> GetByName(string address)
+        public async Task<Account> GetByNameAsync(string address)
         {
             using (var sqlConnection = new MySqlConnection(_connectionString))
             {

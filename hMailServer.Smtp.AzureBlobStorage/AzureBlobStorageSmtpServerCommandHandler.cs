@@ -24,23 +24,23 @@ namespace hMailServer.Smtp.AzureBlobStorage
 
         public Task<SmtpCommandResult> HandleRset()
         {
-            return SmtpCommandResult.Default250SuccessTask();
+            return SmtpCommandResult.CreateDefault250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleHelo(string hostName)
         {
-            return SmtpCommandResult.Default250SuccessTask();
+            return SmtpCommandResult.CreateDefault250SuccessTask();
         }
         
         public Task<SmtpCommandResult> HandleEhlo(string hostName)
         {
-            return SmtpCommandResult.Default250SuccessTask();
+            return SmtpCommandResult.CreateDefault250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
         {
             _fromAddress = fromAddress;
-            return SmtpCommandResult.Default250SuccessTask();
+            return SmtpCommandResult.CreateDefault250SuccessTask();
         }
 
         public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
@@ -51,7 +51,7 @@ namespace hMailServer.Smtp.AzureBlobStorage
             var recipientBlob = recipientsContainer.GetBlockBlobReference(recipientAddress);
 
             if (recipientBlob.Exists())
-                return SmtpCommandResult.Default250SuccessTask();
+                return SmtpCommandResult.CreateDefault250SuccessTask();
             else
                 return Task.Run(() => new SmtpCommandResult(550, "No suchu ser."));
         }
@@ -65,7 +65,7 @@ namespace hMailServer.Smtp.AzureBlobStorage
 
             mailBlob.UploadFromStream(stream);
 
-            return SmtpCommandResult.Default250SuccessTask();
+            return SmtpCommandResult.CreateDefault250SuccessTask();
         }
 
     }

@@ -5,6 +5,7 @@ using hMailServer.Core;
 using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.POP3;
 using hMailServer.Core.Protocols.SMTP;
+using hMailServer.Delivery;
 using hMailServer.Protocols.SMTP;
 using StructureMap;
 
@@ -20,8 +21,10 @@ namespace hMailServer
             
             var container = new Container(new DependencyRegistry(config));
 
-            var smtpServerSessionConfiguration = new SmtpServerSessionConfiguration();
-            smtpServerSessionConfiguration.TempDirectory = config.TempDirectory;
+            var smtpServerSessionConfiguration = new SmtpServerSessionConfiguration
+                {
+                    TempDirectory = config.TempDirectory
+                };
 
             Func<ISession> smtpSessionFactory = () => 
                 new SmtpServerSession(new SmtpServerCommandHandler(container), log, smtpServerSessionConfiguration);
@@ -41,6 +44,15 @@ namespace hMailServer
                 {
                     Port = 110
                 };
+
+
+
+            var deliverer = new MessageDeliverer(container);
+            var delivererTask = deliverer.RunAsync();
+
+
+
+
 
             var pop3Server = new Server(pop3SessionFactory, log, pop3ServerConfiguration);
             var pop3RunTask = pop3Server.RunAsync();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using hMailServer.Entities;
@@ -18,7 +19,7 @@ namespace hMailServer.Repository.MySQL
             _dataDirectory = dataDirectory;
         }
 
-        public async Task Insert(Message message, Stream stream)
+        public async Task InsertAsync(Message message, Stream stream)
         {
             message.Filename = Path.ChangeExtension(Path.Combine(_dataDirectory, Guid.NewGuid().ToString()), ".eml");
 
@@ -31,11 +32,25 @@ namespace hMailServer.Repository.MySQL
             {
                 sqlConnection.Open();
                 
-                var messageId = await sqlConnection.InsertAsync<ulong>(message);
+                var messageId = await sqlConnection.InsertAsync<long>(message);
 
-                message.Id = messageId;
+                message.Id = (ulong) messageId;
             }
         }
 
+        public async Task<Message> GetMessageToDeliverAsync()
+        {
+            using (var sqlConnection = new MySqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                var messages =
+                    await sqlConnection.QueryAsync<Message>("SELECT * FROM hm_messages WHERE messagetype = 1 LIMIT 1");
+
+                var message = messages.SingleOrDefault();
+
+                return message;
+            }
+        }
     }
 }

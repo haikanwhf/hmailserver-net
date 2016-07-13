@@ -94,6 +94,7 @@ namespace hMailServer.Core
             _cancellationTokenSource.Dispose();
             _listener.Stop();
 
+            // TODO: When what?
             await Task.WhenAll();
         }
     }

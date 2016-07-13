@@ -6,6 +6,7 @@ namespace hMailServer.Repository
 {
     public interface IMessageRepository
     {
-        Task Insert(Message message, Stream stream);
+        Task InsertAsync(Message message, Stream stream);
+        Task<Message> GetMessageToDeliverAsync();
     }
 }
