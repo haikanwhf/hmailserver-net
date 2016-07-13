@@ -119,7 +119,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
             _connection.SetTimeout(_configuration.DataCommandTimeout);
 
-            using (var target = new MemoryStreamWithFileBacking(DataTransferMemoryBufferMaxSize))
+            using (var target = new MemoryStreamWithFileBacking(DataTransferMemoryBufferMaxSize, _configuration.TempDirectory))
             {
                 var transmissionBuffer = new TransmissionBuffer(target);
 

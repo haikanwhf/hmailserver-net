@@ -9,10 +9,12 @@ namespace hMailServer.Application
     {
         public DependencyRegistry(ServiceConfiguration serviceConfiguration)
         {
-            var repositoryFactory = new RepositoryFactory(serviceConfiguration.DatabaseConfiguration);
+            var repositoryFactory = new RepositoryFactory(serviceConfiguration.DatabaseConfiguration, serviceConfiguration.TempDirectory);
 
             For<IAccountRepository>()
                 .Use(() => repositoryFactory.CreateAccountRepository());
+            For<IMessageRepository>()
+                .Use(() => repositoryFactory.CreateMessageRepository());
         }
     }
 }

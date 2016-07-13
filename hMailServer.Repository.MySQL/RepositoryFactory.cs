@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Dapper;
 using hMailServer.Repository.RelationalShared;
 using MySql.Data.MySqlClient;
@@ -31,11 +32,18 @@ namespace hMailServer.Repository.MySQL
                             return null;
                         }));
             }
+
+            var resolver = new CustomSimpleCrudResolver(mappings);
+            SimpleCRUD.SetTableNameResolver(resolver);
+            SimpleCRUD.SetColumnNameResolver(resolver);
+            SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
+
         }
 
         private readonly string _connectionString;
-        
-        public RepositoryFactory(DatabaseConfiguration databaseConfiguration)
+        private readonly string _dataDirectory;
+
+        public RepositoryFactory(DatabaseConfiguration databaseConfiguration, string dataDirectory)
         {
             var connectionStringBuilder = new MySqlConnectionStringBuilder();
             connectionStringBuilder.UserID = databaseConfiguration.Username;
@@ -45,11 +53,18 @@ namespace hMailServer.Repository.MySQL
             connectionStringBuilder.Port = databaseConfiguration.Port;
 
             _connectionString = connectionStringBuilder.ToString();
+
+            _dataDirectory = dataDirectory;
         }
 
         public IAccountRepository CreateAccountRepository()
         {
             return new AccountRepository(_connectionString);
+        }
+
+        public IMessageRepository CreateMessageRepository()
+        {
+            return new MessageRepository(_connectionString, _dataDirectory);
         }
     }
 }

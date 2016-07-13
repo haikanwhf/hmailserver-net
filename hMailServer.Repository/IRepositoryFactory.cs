@@ -3,5 +3,6 @@
    public interface IRepositoryFactory
    {
       IAccountRepository CreateAccountRepository();
-   }
+      IMessageRepository CreateMessageRepository();
+    }
 }

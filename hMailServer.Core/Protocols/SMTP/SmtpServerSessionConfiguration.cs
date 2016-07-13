@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
 
 namespace hMailServer.Core.Protocols.SMTP
@@ -13,5 +14,7 @@ namespace hMailServer.Core.Protocols.SMTP
         public ConnectionSecurity ConnectionSecurity { get; set; }
 
         public string HostName { get; set; } = Environment.MachineName;
+
+        public string TempDirectory { get; set; } = Path.GetTempPath();
     }
 }

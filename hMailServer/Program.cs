@@ -20,8 +20,11 @@ namespace hMailServer
             
             var container = new Container(new DependencyRegistry(config));
 
+            var smtpServerSessionConfiguration = new SmtpServerSessionConfiguration();
+            smtpServerSessionConfiguration.TempDirectory = config.TempDirectory;
+
             Func<ISession> smtpSessionFactory = () => 
-                new SmtpServerSession(new SmtpServerCommandHandler(container), log, new SmtpServerSessionConfiguration());
+                new SmtpServerSession(new SmtpServerCommandHandler(container), log, smtpServerSessionConfiguration);
 
             var serverConfiguration = new ServerConfiguration()
                 {

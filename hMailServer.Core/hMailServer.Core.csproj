@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConnectionSecurity.cs" />
+    <Compile Include="Deliverer\MessageDeliverer.cs" />
     <Compile Include="DisconnectedException.cs" />
     <Compile Include="EmailAddressParser.cs" />
     <Compile Include="IConnection.cs" />

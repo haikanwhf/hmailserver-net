@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using hMailServer.Core.Protocols.SMTP;
+using hMailServer.Entities;
 using hMailServer.Repository;
 using StructureMap;
 
@@ -53,12 +55,27 @@ namespace hMailServer.Protocols.SMTP
 
         public Task<SmtpCommandResult> HandleData(Stream stream)
         {
-            string fileName = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            var recipients = new List<Recipient>();
 
-            using (var fileStream = File.Open(fileName, FileMode.CreateNew))
+            foreach (var recipient in _state.Recipients)
             {
-                stream.CopyTo(fileStream);
+                recipients.Add(new Recipient()
+                {
+                    Address = recipient,
+                    OriginalAddress = recipient,
+                });
             }
+
+            var message = new Message
+                {
+                    From = _state.FromAddress,
+                    State = MessageState.Delivering,
+                    //Recipients = recipients,
+                    Size = (ulong)stream.Length
+                };
+
+            var messageRepository = _container.GetInstance<IMessageRepository>();
+            messageRepository.Insert(message, stream);
 
             return SmtpCommandResult.Default250SuccessTask();
         }

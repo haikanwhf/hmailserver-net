@@ -56,6 +56,9 @@ namespace hMailServer.Configuration
                     throw new NotImplementedException(string.Format("Database type {0} is not supported.", databaseType));
             }
 
+            serviceConfiguration.TempDirectory = iniFile.Read("Directories", "TempFolder");
+            serviceConfiguration.DataDirectory = iniFile.Read("Directories", "DataFolder");
+
             return serviceConfiguration;
         }
     }

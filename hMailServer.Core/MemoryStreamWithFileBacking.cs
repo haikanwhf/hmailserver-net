@@ -10,11 +10,17 @@ namespace hMailServer.Core
         private readonly string _backingFilePath;
         private readonly int _memoryBufferMaxSize;
 
-        public MemoryStreamWithFileBacking(int memoryBufferMaxSize)
+        public MemoryStreamWithFileBacking(int memoryBufferMaxSize, string tempDirectory)
         {
             _memoryStream = new MemoryStream();
-            _backingFilePath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+            _backingFilePath = Path.Combine(tempDirectory, Guid.NewGuid().ToString());
             _memoryBufferMaxSize = memoryBufferMaxSize;
+        }
+
+        public MemoryStreamWithFileBacking(int memoryBufferMaxSize) : 
+            this(memoryBufferMaxSize, Path.GetTempPath())
+        {
+            
         }
 
         internal string BackingFilePath => _backingFilePath;

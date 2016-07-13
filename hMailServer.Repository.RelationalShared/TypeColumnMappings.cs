@@ -12,7 +12,7 @@ namespace hMailServer.Repository.RelationalShared
                 new TypeColumnMapping()
                 {
                     Type = typeof (Account),
-
+                    TableName = "hm_accounts",
                     FieldNameByColumnName = new Dictionary<string, string>
                     {
                         {"accountid", nameof(Account.Id)},
@@ -41,6 +41,27 @@ namespace hMailServer.Repository.RelationalShared
                         {"accountpersonfirstname", nameof(Account.FirstName)},
                         {"accountpersonlastname", nameof(Account.LastName)},
 
+                    }
+                },
+                new TypeColumnMapping()
+                {
+                    Type = typeof (Message),
+                    TableName = "hm_messages",
+                    FieldNameByColumnName = new Dictionary<string, string>
+                    {
+                        {"messageid", nameof(Message.Id)},
+                        {"messageaccountid", nameof(Message.AccountId)},
+                        {"messagefolderid", nameof(Message.FolderId)},
+                        {"messagefilename", nameof(Message.Filename)},
+                        {"messagetype", nameof(Message.State)},
+                        {"messagefrom", nameof(Message.From)},
+                        {"messagesize", nameof(Message.Size)},
+                        {"messagecurnooftries", nameof(Message.NumberOfRetries)},
+                        {"messagenexttrytime", nameof(Message.NextDeliveryAttempt)},
+                        {"messagecreatetime", nameof(Message.CreateTime)},
+                        {"messagelocked", nameof(Message.Locked)},
+                        {"messageflags", nameof(Message.Flags)},
+                        {"messageuid", nameof(Message.Uid)},
                     }
                 }
             };
