@@ -7,9 +7,9 @@ namespace hMailServer.Repository.RelationalShared
     {
         public static List<TypeColumnMapping> Create()
         {
-            return new List<TypeColumnMapping>()
+            return new List<TypeColumnMapping>
             {
-                new TypeColumnMapping()
+                new TypeColumnMapping
                 {
                     Type = typeof (Account),
                     TableName = "hm_accounts",
@@ -43,7 +43,7 @@ namespace hMailServer.Repository.RelationalShared
 
                     }
                 },
-                new TypeColumnMapping()
+                new TypeColumnMapping
                 {
                     Type = typeof (Message),
                     TableName = "hm_messages",
@@ -63,7 +63,21 @@ namespace hMailServer.Repository.RelationalShared
                         {"messageflags", nameof(Message.Flags)},
                         {"messageuid", nameof(Message.Uid)},
                     }
+                },
+                new TypeColumnMapping
+                {
+                    Type = typeof (Recipient),
+                    TableName = "hm_messagerecipients",
+                    FieldNameByColumnName = new Dictionary<string, string>
+                    {
+                        {"recipientid", nameof(Recipient.Id)},
+                        {"recipientmessageid", nameof(Recipient.MessageId)},
+                        {"recipientaddress", nameof(Recipient.Address)},
+                        {"recipientlocalaccountid", nameof(Recipient.AccountId)},
+                        {"recipientoriginaladdress", nameof(Recipient.OriginalAddress)},
+                    }
                 }
+
             };
         }
     }

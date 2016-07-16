@@ -34,7 +34,14 @@ namespace hMailServer.Repository.MySQL
                 
                 var messageId = await sqlConnection.InsertAsync<long>(message);
 
-                message.Id = (ulong) messageId;
+                message.Id = messageId;
+            }
+
+            foreach (var recipient in message.Recipients)
+            {
+                recipient.MessageId = message.Id;
+
+                await InsertAsync(recipient);
             }
         }
 
@@ -44,12 +51,25 @@ namespace hMailServer.Repository.MySQL
             {
                 sqlConnection.Open();
 
+                // TODO: MessageNextTryTime should be included in SQL
                 var messages =
-                    await sqlConnection.QueryAsync<Message>("SELECT * FROM hm_messages WHERE messagetype = 1 LIMIT 1");
+                    await sqlConnection.QueryAsync<Message>("SELECT * FROM hm_messages WHERE messagetype = 1 AND messagelocked = 0 LIMIT 1");
 
                 var message = messages.SingleOrDefault();
 
                 return message;
+            }
+        }
+
+        public async Task InsertAsync(Recipient messageRecipient)
+        {
+            using (var sqlConnection = new MySqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                var messageRecipientId = await sqlConnection.InsertAsync<long>(messageRecipient);
+
+                messageRecipient.Id = messageRecipientId;
             }
         }
     }

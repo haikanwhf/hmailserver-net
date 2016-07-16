@@ -49,29 +49,28 @@ namespace hMailServer.Protocols.SMTP
 
         public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
         {
-            _state.Recipients.Add(recipientAddress);
+            var accountRepository = _container.GetInstance<IAccountRepository>();
+            var account = accountRepository.GetByNameAsync(recipientAddress).Result;
+            
+            var recipient = new Recipient
+            {
+                    AccountId = account != null ? account.Id : 0,
+                    Address = recipientAddress,
+                    OriginalAddress = recipientAddress
+                };
+
+            _state.Recipients.Add(recipient);
             return SmtpCommandResult.CreateDefault250SuccessTask();
         }
 
         public async Task<SmtpCommandResult> HandleData(Stream stream)
         {
-            var recipients = new List<Recipient>();
-
-            foreach (var recipient in _state.Recipients)
-            {
-                recipients.Add(new Recipient()
-                {
-                    Address = recipient,
-                    OriginalAddress = recipient,
-                });
-            }
-
             var message = new Message
                 {
                     From = _state.FromAddress,
                     State = MessageState.Delivering,
-                    //Recipients = recipients,
-                    Size = (ulong)stream.Length
+                    Recipients = _state.Recipients,
+                    Size = stream.Length
                 };
 
             var messageRepository = _container.GetInstance<IMessageRepository>();

@@ -2,7 +2,6 @@
 using hMailServer.Application;
 using hMailServer.Configuration;
 using hMailServer.Core;
-using hMailServer.Core.Logging;
 using hMailServer.Core.Protocols.POP3;
 using hMailServer.Core.Protocols.SMTP;
 using hMailServer.Delivery;

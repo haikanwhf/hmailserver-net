@@ -11,10 +11,8 @@ namespace hMailServer.Application
         {
             var repositoryFactory = new RepositoryFactory(serviceConfiguration.DatabaseConfiguration, serviceConfiguration.TempDirectory);
 
-            For<IAccountRepository>()
-                .Use(() => repositoryFactory.CreateAccountRepository());
-            For<IMessageRepository>()
-                .Use(() => repositoryFactory.CreateMessageRepository());
+            For<IAccountRepository>().Use(() => repositoryFactory.CreateAccountRepository());
+            For<IMessageRepository>().Use(() => repositoryFactory.CreateMessageRepository());
         }
     }
 }

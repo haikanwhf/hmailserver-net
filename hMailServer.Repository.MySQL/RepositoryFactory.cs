@@ -34,10 +34,10 @@ namespace hMailServer.Repository.MySQL
             }
 
             var resolver = new CustomSimpleCrudResolver(mappings);
+
             SimpleCRUD.SetTableNameResolver(resolver);
             SimpleCRUD.SetColumnNameResolver(resolver);
             SimpleCRUD.SetDialect(SimpleCRUD.Dialect.MySQL);
-
         }
 
         private readonly string _connectionString;

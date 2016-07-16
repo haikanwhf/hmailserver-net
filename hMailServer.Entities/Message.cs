@@ -5,11 +5,11 @@ namespace hMailServer.Entities
 {
     public class Message
     {
-        public ulong Id { get; set; }
-        public ulong Uid { get; set; }
-        public ulong AccountId { get; set; }
-        public ulong FolderId { get; set; }
-        public ulong Size { get; set; }
+        public long Id { get; set; }
+        public long Uid { get; set; }
+        public long AccountId { get; set; }
+        public long FolderId { get; set; }
+        public long Size { get; set; }
         public MessageState State { get; set; }
         public short NumberOfRetries { get; set; }
         public short Flags { get; set; }
