@@ -7,5 +7,10 @@
         public string Address { get; set; }
         public string OriginalAddress { get; set; }
         public long AccountId { get; set; }
+
+        public Recipient Clone()
+        {
+            return (Recipient) MemberwiseClone();
+        }
     }
 }

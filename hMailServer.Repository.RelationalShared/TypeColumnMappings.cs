@@ -56,7 +56,7 @@ namespace hMailServer.Repository.RelationalShared
                         {"messagetype", nameof(Message.State)},
                         {"messagefrom", nameof(Message.From)},
                         {"messagesize", nameof(Message.Size)},
-                        {"messagecurnooftries", nameof(Message.NumberOfRetries)},
+                        {"messagecurnooftries", nameof(Message.NumberOfDeliveryAttempts)},
                         {"messagenexttrytime", nameof(Message.NextDeliveryAttempt)},
                         {"messagecreatetime", nameof(Message.CreateTime)},
                         {"messagelocked", nameof(Message.Locked)},

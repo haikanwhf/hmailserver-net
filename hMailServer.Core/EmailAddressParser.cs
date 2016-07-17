@@ -35,9 +35,14 @@ namespace hMailServer.Core
 
         }
 
-        public static string GetDomainPart(string emailAddress)
+        public static string GetDomain(string emailAddress)
         {
             return new MailAddress(emailAddress).Host;
+        }
+
+        public static string GetMailbox(string emailAddress)
+        {
+            return new MailAddress(emailAddress).User;
         }
     }
 }
