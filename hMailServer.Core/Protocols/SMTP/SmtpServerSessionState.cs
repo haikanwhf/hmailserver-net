@@ -23,15 +23,16 @@ namespace hMailServer.Core.Protocols.SMTP
         {
             switch (command)
             {
+                case SmtpCommand.Help:
                 case SmtpCommand.Helo:
                 case SmtpCommand.Ehlo:
                 case SmtpCommand.Rset:
                     return true;
                 case SmtpCommand.StartTls:
                     return HasHelo && !HasMailFrom;
-                case SmtpCommand.MailFrom:
+                case SmtpCommand.Mail:
                     return HasHelo && !HasMailFrom;
-                case SmtpCommand.RcptTo:
+                case SmtpCommand.Rcpt:
                     return HasMailFrom;
                 case SmtpCommand.Data:
                     return HasRcptTo;

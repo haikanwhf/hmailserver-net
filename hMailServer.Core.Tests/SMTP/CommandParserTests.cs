@@ -21,13 +21,13 @@ namespace hMailServer.Core.Tests.SMTP
         [Test]
         public void ParsingMailFromShouldSucceeed()
         {
-            Assert.AreEqual(SmtpCommand.MailFrom, CommandParser.ParseCommand("MAIL FROM: test@example.com"));
+            Assert.AreEqual(SmtpCommand.Mail, CommandParser.ParseCommand("MAIL FROM: test@example.com"));
         }
 
         [Test]
         public void ParsingRcptToShouldSucceeed()
         {
-            Assert.AreEqual(SmtpCommand.RcptTo, CommandParser.ParseCommand("RCPT TO: test@example.com"));
+            Assert.AreEqual(SmtpCommand.Rcpt, CommandParser.ParseCommand("RCPT TO: test@example.com"));
         }
 
         [Test]
@@ -45,19 +45,19 @@ namespace hMailServer.Core.Tests.SMTP
         [Test]
         public void ParsingHeloWithMissingHostnameShouldSucceed()
         {
-            Assert.IsNull(CommandParser.ParseHelo("HELO"));
+            Assert.IsNull(CommandParser.ParseHeloEhlo("HELO"));
         }
 
         [Test]
         public void ParsingHeloWithTrailingSpaceAndMissingHostnameShouldSucceed()
         {
-            Assert.IsNull(CommandParser.ParseHelo("HELO "));
+            Assert.IsNull(CommandParser.ParseHeloEhlo("HELO "));
         }
 
         [Test]
         public void ParsingHeloWithHostnameWithLeadingAndTrailingSpaceShouldTrim()
         {
-            Assert.AreEqual("example.com", CommandParser.ParseHelo("HELO example.com"));
+            Assert.AreEqual("example.com", CommandParser.ParseHeloEhlo("HELO example.com"));
         }
     }
 }

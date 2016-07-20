@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using hMailServer.Crypto;
 using hMailServer.Entities;
 using MySql.Data.MySqlClient;
 
@@ -46,6 +47,31 @@ namespace hMailServer.Repository.MySQL
                 var account = accounts.SingleOrDefault();
 
                 return account;
+            }
+        }
+
+        public async Task<Account> ValidatePassword(string username, string password)
+        {
+            using (var sqlConnection = new MySqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                var accounts = await sqlConnection.QueryAsync<Account>("SELECT * FROM hm_accounts WHERE accountaddress = @accountaddress", new
+                {
+                    accountaddress = username
+                });
+
+                var account = accounts.SingleOrDefault();
+
+                if (account == null)
+                    return null;
+
+                // TODO: Support old hashing methods.
+                var salter = new Salter();
+                if (salter.ValidateHash(password, account.Password))
+                    return account;
+
+                return null;
             }
         }
     }

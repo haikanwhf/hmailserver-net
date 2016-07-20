@@ -21,7 +21,7 @@ namespace hMailServer.Core.Tests.SMTP
                     HasRcptTo = false
                 };
 
-            Assert.IsFalse(state.IsCommandValid(SmtpCommand.MailFrom));
+            Assert.IsFalse(state.IsCommandValid(SmtpCommand.Mail));
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace hMailServer.Core.Tests.SMTP
                 HasRcptTo = false
             };
 
-            Assert.True(state.IsCommandValid(SmtpCommand.MailFrom));
+            Assert.True(state.IsCommandValid(SmtpCommand.Mail));
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace hMailServer.Core.Tests.SMTP
                 HasRcptTo = false
             };
 
-            Assert.IsFalse(state.IsCommandValid(SmtpCommand.RcptTo));
+            Assert.IsFalse(state.IsCommandValid(SmtpCommand.Rcpt));
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace hMailServer.Core.Tests.SMTP
                 HasRcptTo = false
             };
 
-            Assert.True(state.IsCommandValid(SmtpCommand.RcptTo));
+            Assert.True(state.IsCommandValid(SmtpCommand.Rcpt));
         }
 
         [Test]

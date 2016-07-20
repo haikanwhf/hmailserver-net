@@ -14,8 +14,8 @@ namespace hMailServer.Core.Protocols.POP3
         Task<Pop3CommandResult> HandleRset();
         Task<Pop3CommandResult> HandleTop();
         Task<Pop3CommandResult> HandleUidl();
-        Task<Pop3CommandResult> HandleUser();
-        Task<Pop3CommandResult> HandlePass();
+        Task<Pop3CommandResult> HandleUser(string username);
+        Task<Pop3CommandResult> HandlePass(string username, string password);
         Task<Pop3CommandResult> HandleCapa();
         Task<Pop3CommandResult> HandleStls();
     }

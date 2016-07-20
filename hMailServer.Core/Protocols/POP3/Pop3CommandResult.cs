@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace hMailServer.Core.Protocols.POP3
 {
@@ -15,6 +11,16 @@ namespace hMailServer.Core.Protocols.POP3
         {
             Success = success;
             Message = message;
+        }
+
+        public static Pop3CommandResult CreateDefaultSuccess()
+        {
+            return new Pop3CommandResult(true, "OK");
+        }
+
+        public static Task<Pop3CommandResult> CreateDefaultSuccessTask()
+        {
+            return Task.Run(() => CreateDefaultSuccess());
         }
     }
 }

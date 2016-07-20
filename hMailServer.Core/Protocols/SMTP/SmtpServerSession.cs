@@ -56,6 +56,9 @@ namespace hMailServer.Core.Protocols.SMTP
 
                     switch (command)
                     {
+                        case SmtpCommand.Help:
+                            await HandleHelp();
+                            break;
                         case SmtpCommand.Rset:
                             await HandleRset();
                             _state.HasMailFrom = false;
@@ -70,10 +73,10 @@ namespace hMailServer.Core.Protocols.SMTP
                         case SmtpCommand.StartTls:
                             await HandleStartTls();
                             break;
-                        case SmtpCommand.MailFrom:
+                        case SmtpCommand.Mail:
                             await HandleMailFrom(data);
                             break;
-                        case SmtpCommand.RcptTo:
+                        case SmtpCommand.Rcpt:
                             await HandleRcptTo(data);
                             break;
                         case SmtpCommand.Data:
@@ -82,6 +85,7 @@ namespace hMailServer.Core.Protocols.SMTP
                         case SmtpCommand.Quit:
                             await HandleQuit();
                             throw new DisconnectedException();
+
                     }
                 }
             }
@@ -91,9 +95,14 @@ namespace hMailServer.Core.Protocols.SMTP
             }
         }
 
+        private async Task HandleHelp()
+        {
+            await SendCommandResult(new SmtpCommandResult(211, "211 DATA HELO EHLO MAIL NOOP QUIT RCPT RSET SAML TURN VRFY"));
+        }
+
         private async Task HandleStartTls()
         {
-            await SendCommandResult(new SmtpCommandResult(220, "220 Go ahead"));
+            await SendCommandResult(new SmtpCommandResult(220, "Go ahead"));
 
             await _connection.SslHandshakeAsServer(_configuration.SslCertificate);
 
@@ -182,6 +191,8 @@ namespace hMailServer.Core.Protocols.SMTP
             {
                 var response = new StringBuilder();
                 response.AppendFormat("250-{0}\r\n", Environment.MachineName);
+                response.AppendFormat("250-SIZE\r\n");
+                response.AppendFormat("250-AUTH LOGIN\r\n");
 
                 if (_configuration.SslCertificate != null)
                     response.AppendFormat("250-STARTTLS\r\n");
@@ -200,7 +211,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private async Task HandleHelo(string data)
         {
-            var heloHostName = CommandParser.ParseHelo(data);
+            var heloHostName = CommandParser.ParseHeloEhlo(data);
             var commandResult = await _commandHandler.HandleHelo(heloHostName);
 
             await SendCommandResult(commandResult);

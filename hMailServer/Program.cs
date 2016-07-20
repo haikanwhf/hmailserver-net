@@ -5,6 +5,7 @@ using hMailServer.Core;
 using hMailServer.Core.Protocols.POP3;
 using hMailServer.Core.Protocols.SMTP;
 using hMailServer.Delivery;
+using hMailServer.Protocols.POP3;
 using hMailServer.Protocols.SMTP;
 using StructureMap;
 
@@ -37,7 +38,7 @@ namespace hMailServer
             var smtpRunTask = smtpServer.RunAsync();
 
             Func<ISession> pop3SessionFactory = () =>
-             new Pop3ServerSession(new NullPop3CommandHandler(), log, new Pop3ServerSessionConfiguration());
+             new Pop3ServerSession(new Pop3ServerCommandHandler(container), log, new Pop3ServerSessionConfiguration());
 
             var pop3ServerConfiguration = new ServerConfiguration()
                 {

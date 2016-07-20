@@ -67,6 +67,10 @@
       <Project>{E8D2635C-2E1E-452A-BC0A-1C7A13132C81}</Project>
       <Name>hMailServer.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\hMailServer.Crypto\hMailServer.Crypto.csproj">
+      <Project>{5eaf12ed-178b-4fee-b74f-898ed13e5092}</Project>
+      <Name>hMailServer.Crypto</Name>
+    </ProjectReference>
     <ProjectReference Include="..\hMailServer.Entities\hMailServer.Entities.csproj">
       <Project>{4d1f88cb-b51b-4a3b-ac22-8ce9c2103b24}</Project>
       <Name>hMailServer.Entities</Name>

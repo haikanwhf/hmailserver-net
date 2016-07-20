@@ -57,6 +57,15 @@ namespace hMailServer.Core.Protocols.POP3
 
                     switch (command)
                     {
+                        case Pop3Command.Capa:
+                            await HandleCapa();
+                            break;
+                        case Pop3Command.User:
+                            await HandleUser(data);
+                            break;
+                        case Pop3Command.Pass:
+                            await HandlePass(data);
+                            break;
                         case Pop3Command.Quit:
                             await HandleQuit();
                             throw new DisconnectedException();
@@ -69,21 +78,64 @@ namespace hMailServer.Core.Protocols.POP3
             }
         }
 
+        private async Task HandleUser(string command)
+        {
+            string username = CommandParser.ParseUser(command);
+
+            var commandResult = await _commandHandler.HandleUser(username);
+
+            if (commandResult.Success)
+            {
+                if (string.IsNullOrWhiteSpace(username))
+                {
+                    // TODO: Check message
+                    await SendCommandResult(new Pop3CommandResult(false, "Invalid user name."));
+                    return;
+                }
+
+                _state.Username = username;
+
+                await SendCommandResult(new Pop3CommandResult(true, "Send your password."));
+            }
+            else
+            {
+                await SendCommandResult(commandResult);
+            }
+        }
+
+        private async Task HandlePass(string command)
+        {
+            var password = CommandParser.ParsePass(command);
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                // TODO: Check message
+                await SendCommandResult(new Pop3CommandResult(false, "Invalid password"));
+                return;
+            }
+
+            _state.Password = password;
+
+            var commandResult = await _commandHandler.HandlePass(_state.Username, _state.Password);
+
+            await SendCommandResult(commandResult);
+        }
+
+       
+        private async Task HandleCapa()
+        {
+            await SendCommandResult(new Pop3CommandResult(true, "CAPA list follows\r\nUSER\r\nUIDL\r\nTOP\r\n."));
+        }
+
         private async Task HandleStls()
         {
             throw new NotImplementedException();
-
-            //await SendCommandResult(new SmtpCommandResult(220, "220 Go ahead"));
-
-            await _connection.SslHandshakeAsServer(_configuration.SslCertificate);
-
-            _commandHandler.HandleRset();
-
-            _state.Reset();
         }
 
         private async Task HandleRset()
         {
+            _state.Reset();
+
             await SendCommandResult(await _commandHandler.HandleRset());
         }
 
@@ -94,7 +146,7 @@ namespace hMailServer.Core.Protocols.POP3
 
         private Task SendBanner()
         {
-            string banner = string.Format(CultureInfo.InvariantCulture, "220 {0} ESMTP", Environment.MachineName);
+            string banner = string.Format(CultureInfo.InvariantCulture, "+OK POP3");
 
             return SendLine(banner);
         }

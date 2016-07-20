@@ -13,9 +13,10 @@ namespace hMailServer.Core.Protocols.SMTP
         Helo,
         Ehlo,
         StartTls,
-        MailFrom,
-        RcptTo,
+        Mail,
+        Rcpt,
         Data,
-        Quit
+        Quit,
+        Help
     }
 }

@@ -60,7 +60,7 @@ namespace hMailServer.Core
                 _inboundUnprocessedStream.Write(dataReceived, 0, readBytes);
 
                 var allBytes = _inboundUnprocessedStream.ToArray();
-                var data = Encoding.UTF8.GetString(allBytes);
+                var data = Encoding.ASCII.GetString(allBytes);
 
                 var index = data.IndexOf(delimiter, StringComparison.InvariantCultureIgnoreCase);
 
@@ -147,7 +147,7 @@ namespace hMailServer.Core
 
         public async Task WriteString(string data)
         {
-            var bytes = Encoding.UTF8.GetBytes(data);
+            var bytes = Encoding.ASCII.GetBytes(data);
 
             await ExecuteWithTimeout(async () =>
                 {

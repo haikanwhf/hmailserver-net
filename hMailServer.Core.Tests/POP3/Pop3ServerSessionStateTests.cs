@@ -12,8 +12,8 @@ namespace hMailServer.Core.Tests.POP3
         {
             var state = new Pop3ServerSessionState()
                 {
-                    HasUsername = true,
-                    HasPassword = false
+                    Username = "per",
+                    Password = null
                 };
 
             Assert.IsFalse(state.IsCommandValid(Pop3Command.Uidl));
@@ -24,8 +24,8 @@ namespace hMailServer.Core.Tests.POP3
         {
             var state = new Pop3ServerSessionState()
             {
-                HasUsername = true,
-                HasPassword = true
+                Username = "per",
+                Password = "secret"
             };
 
             Assert.IsTrue(state.IsCommandValid(Pop3Command.Uidl));
