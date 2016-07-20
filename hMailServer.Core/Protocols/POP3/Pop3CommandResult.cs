@@ -22,5 +22,10 @@ namespace hMailServer.Core.Protocols.POP3
         {
             return Task.Run(() => CreateDefaultSuccess());
         }
+
+        public static Pop3CommandResult CreateNoSuchMessage()
+        {
+            return new Pop3CommandResult(false, "No such message");
+        }
     }
 }

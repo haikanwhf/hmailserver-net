@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<xs:schema id="NLog" targetNamespace="http://www.nlog-project.org/schemas/NLog.xsd" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.nlog-project.org/schemas/NLog.xsd">
+<xs:schema accountId="NLog" targetNamespace="http://www.nlog-project.org/schemas/NLog.xsd" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.nlog-project.org/schemas/NLog.xsd">
   <xs:element name="nlog" type="NLogConfiguration" />
   <xs:complexType name="NLogConfiguration">
     <xs:choice minOccurs="0" maxOccurs="unbounded">
@@ -337,7 +337,7 @@
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="bufferSize" minOccurs="0" maxOccurs="1" type="xs:integer" />
           <xs:element name="flushTimeout" minOccurs="0" maxOccurs="1" type="xs:integer" />
-          <xs:element name="slidingTimeout" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+          <xs:element name="slaccountIdingTimeout" minOccurs="0" maxOccurs="1" type="xs:boolean" />
         </xs:choice>
         <xs:attribute name="name" type="xs:string">
           <xs:annotation>
@@ -354,9 +354,9 @@
             <xs:documentation>Timeout (in milliseconds) after which the contents of buffer will be flushed if there's no write in the specified period of time. Use -1 to disable timed flushes.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="slidingTimeout" type="xs:boolean">
+        <xs:attribute name="slaccountIdingTimeout" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Indicates whether to use sliding timeout.</xs:documentation>
+            <xs:documentation>Indicates whether to use slaccountIding timeout.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
       </xs:extension>
@@ -710,7 +710,7 @@
           <xs:element name="dbDatabase" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="dbHost" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="dbPassword" minOccurs="0" maxOccurs="1" type="Layout" />
-          <xs:element name="dbProvider" minOccurs="0" maxOccurs="1" type="xs:string" />
+          <xs:element name="dbProvaccountIder" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="dbUserName" minOccurs="0" maxOccurs="1" type="Layout" />
           <xs:element name="keepConnection" minOccurs="0" maxOccurs="1" type="xs:boolean" />
           <xs:element name="useTransactions" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -728,7 +728,7 @@
         </xs:attribute>
         <xs:attribute name="connectionString" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Connection string. When provided, it overrides the values specified in DBHost, DBUserName, DBPassword, DBDatabase.</xs:documentation>
+            <xs:documentation>Connection string. When provaccountIded, it overraccountIdes the values specified in DBHost, DBUserName, DBPassword, DBDatabase.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="connectionStringName" type="xs:string">
@@ -738,27 +738,27 @@
         </xs:attribute>
         <xs:attribute name="dbDatabase" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database name. If the ConnectionString is not provided this value will be used to construct the "Database=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database name. If the ConnectionString is not provaccountIded this value will be used to construct the "Database=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbHost" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database host name. If the ConnectionString is not provided this value will be used to construct the "Server=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database host name. If the ConnectionString is not provaccountIded this value will be used to construct the "Server=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbPassword" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database password. If the ConnectionString is not provided this value will be used to construct the "Password=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database password. If the ConnectionString is not provaccountIded this value will be used to construct the "Password=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="dbProvider" type="xs:string">
+        <xs:attribute name="dbProvaccountIder" type="xs:string">
           <xs:annotation>
-            <xs:documentation>Name of the database provider.</xs:documentation>
+            <xs:documentation>Name of the database provaccountIder.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="dbUserName" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Database user name. If the ConnectionString is not provided this value will be used to construct the "User ID=" part of the connection string.</xs:documentation>
+            <xs:documentation>Database user name. If the ConnectionString is not provaccountIded this value will be used to construct the "User ID=" part of the connection string.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="keepConnection" type="xs:boolean">
@@ -768,12 +768,12 @@
         </xs:attribute>
         <xs:attribute name="useTransactions" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Obsolete - value will be ignored! The logging code always runs outside of transaction. Gets or sets a value indicating whether to use database transactions. Some data providers require this.</xs:documentation>
+            <xs:documentation>Obsolete - value will be ignored! The logging code always runs outsaccountIde of transaction. Gets or sets a value indicating whether to use database transactions. Some data provaccountIders require this.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="installConnectionString" type="SimpleLayoutAttribute">
           <xs:annotation>
-            <xs:documentation>Connection string using for installation and uninstallation. If not provided, regular ConnectionString is being used.</xs:documentation>
+            <xs:documentation>Connection string using for installation and uninstallation. If not provaccountIded, regular ConnectionString is being used.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="commandText" type="SimpleLayoutAttribute">
@@ -811,7 +811,7 @@
     </xs:attribute>
     <xs:attribute name="connectionString" type="SimpleLayoutAttribute">
       <xs:annotation>
-        <xs:documentation>Connection string to run the command against. If not provided, connection string from the target is used.</xs:documentation>
+        <xs:documentation>Connection string to run the command against. If not provaccountIded, connection string from the target is used.</xs:documentation>
       </xs:annotation>
     </xs:attribute>
     <xs:attribute name="ignoreFailures" type="xs:boolean">
@@ -1110,7 +1110,7 @@
         </xs:attribute>
         <xs:attribute name="cleanupFileName" type="xs:boolean">
           <xs:annotation>
-            <xs:documentation>Cleanup invalid values in a filename, e.g. slashes in a filename. If set to true, this can impact the performance of massive writes. If set to false, nothing gets written when the filename is wrong.</xs:documentation>
+            <xs:documentation>Cleanup invalaccountId values in a filename, e.g. slashes in a filename. If set to true, this can impact the performance of massive writes. If set to false, nothing gets written when the filename is wrong.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="fileName" type="SimpleLayoutAttribute">
@@ -1227,7 +1227,7 @@
   <xs:simpleType name="NLog.Targets.Win32FileAttributes">
     <xs:restriction base="xs:string">
       <xs:enumeration value="ReadOnly" />
-      <xs:enumeration value="Hidden" />
+      <xs:enumeration value="HaccountIdden" />
       <xs:enumeration value="System" />
       <xs:enumeration value="Archive" />
       <xs:enumeration value="Device" />
@@ -1271,7 +1271,7 @@
           <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="domain" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="impersonationLevel" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.SecurityImpersonationLevel" />
-          <xs:element name="logOnProvider" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.LogOnProviderType" />
+          <xs:element name="logOnProvaccountIder" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.LogOnProvaccountIderType" />
           <xs:element name="logOnType" minOccurs="0" maxOccurs="1" type="NLog.Targets.Wrappers.SecurityLogOnType" />
           <xs:element name="password" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="revertToSelf" minOccurs="0" maxOccurs="1" type="xs:boolean" />
@@ -1292,9 +1292,9 @@
             <xs:documentation>Required impersonation level.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="logOnProvider" type="NLog.Targets.Wrappers.LogOnProviderType">
+        <xs:attribute name="logOnProvaccountIder" type="NLog.Targets.Wrappers.LogOnProvaccountIderType">
           <xs:annotation>
-            <xs:documentation>Type of the logon provider.</xs:documentation>
+            <xs:documentation>Type of the logon provaccountIder.</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="logOnType" type="NLog.Targets.Wrappers.SecurityLogOnType">
@@ -1328,7 +1328,7 @@
       <xs:enumeration value="Delegation" />
     </xs:restriction>
   </xs:simpleType>
-  <xs:simpleType name="NLog.Targets.Wrappers.LogOnProviderType">
+  <xs:simpleType name="NLog.Targets.Wrappers.LogOnProvaccountIderType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Default" />
     </xs:restriction>
@@ -2269,7 +2269,7 @@
         </xs:attribute>
         <xs:attribute name="customColumnDelimiter" type="xs:string">
           <xs:annotation>
-            <xs:documentation>Custom column delimiter value (valid when ColumnDelimiter is set to 'Custom').</xs:documentation>
+            <xs:documentation>Custom column delimiter value (valaccountId when ColumnDelimiter is set to 'Custom').</xs:documentation>
           </xs:annotation>
         </xs:attribute>
         <xs:attribute name="delimiter" type="NLog.Layouts.CsvColumnDelimiterMode">

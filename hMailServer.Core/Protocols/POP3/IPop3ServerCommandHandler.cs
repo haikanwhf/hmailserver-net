@@ -8,8 +8,8 @@ namespace hMailServer.Core.Protocols.POP3
         Task<Pop3CommandResult> HandleQuit();
         Task<Pop3CommandResult> HandleStat();
         Task<Pop3CommandResult> HandleList();
-        Task<Pop3CommandResult> HandleRetr();
-        Task<Pop3CommandResult> HandleDele();
+        Task<Stream> HandleRetr(int messageNumber);
+        Task<Pop3CommandResult> HandleDele(int messageNumber);
         Task<Pop3CommandResult> HandleNoop();
         Task<Pop3CommandResult> HandleRset();
         Task<Pop3CommandResult> HandleTop();

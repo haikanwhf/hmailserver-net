@@ -74,6 +74,7 @@ namespace hMailServer.Delivery
         {
             var accountRepository = _container.GetInstance<IAccountRepository>();
             var messageRepository = _container.GetInstance<IMessageRepository>();
+            var folderRepository = _container.GetInstance<IFolderRepository>();
 
             message.NumberOfDeliveryAttempts++;
 
@@ -81,7 +82,7 @@ namespace hMailServer.Delivery
 
             try
             {
-                var localDelivery = new LocalDelivery(accountRepository, messageRepository);
+                var localDelivery = new LocalDelivery(accountRepository, messageRepository, folderRepository);
 
                 await localDelivery.DeliverAsync(message);
 

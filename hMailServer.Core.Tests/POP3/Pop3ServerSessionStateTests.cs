@@ -8,25 +8,23 @@ namespace hMailServer.Core.Tests.POP3
     public class Pop3ServerSessionStateTests
     {
         [Test]
-        public void UidlBeforeUserAndPasswordShouldFail()
+        public void UidlBeforeLogonShouldFail()
         {
             var state = new Pop3ServerSessionState()
                 {
-                    Username = "per",
-                    Password = null
+                    IsLoggedOn = false,
                 };
 
             Assert.IsFalse(state.IsCommandValid(Pop3Command.Uidl));
         }
 
         [Test]
-        public void UidlAfterUserAndPasswordShouldFail()
+        public void UidlAfterLogonShouldSucceed()
         {
             var state = new Pop3ServerSessionState()
-            {
-                Username = "per",
-                Password = "secret"
-            };
+                {
+                    IsLoggedOn = true,
+                };
 
             Assert.IsTrue(state.IsCommandValid(Pop3Command.Uidl));
         }

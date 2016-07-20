@@ -7,6 +7,6 @@ namespace hMailServer.Repository
     {
         Task<Account> GetByIdAsync(long id);
         Task<Account> GetByNameAsync(string address);
-        Task<Account> ValidatePassword(string username, string password);
+        Task<Account> ValidatePasswordAsync(string username, string password);
     }
 }

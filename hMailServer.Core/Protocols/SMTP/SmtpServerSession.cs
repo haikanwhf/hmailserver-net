@@ -165,16 +165,16 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private async Task HandleMailFrom(string data)
         {
-            var fromAddress = CommandParser.ParseMailFrom(data);
+            var mailFromParseResult = CommandParser.ParseMailFrom(data);
             // BREAKING: Option Allow Mail From Null removed.
 
-            if (!EmailAddressParser.IsValidEmailAddress(fromAddress))
+            if (!EmailAddressParser.IsValidEmailAddress(mailFromParseResult.Address))
             {
                 await SendCommandResult(new SmtpCommandResult(550, "The address is not valid"));
                 return;
             }
             
-            var commandResult = await _commandHandler.HandleMailFrom(fromAddress);
+            var commandResult = await _commandHandler.HandleMailFrom(mailFromParseResult.Address);
 
             await SendCommandResult(commandResult);
             

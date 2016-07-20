@@ -50,7 +50,7 @@ namespace hMailServer.Repository.MySQL
             }
         }
 
-        public async Task<Account> ValidatePassword(string username, string password)
+        public async Task<Account> ValidatePasswordAsync(string username, string password)
         {
             using (var sqlConnection = new MySqlConnection(_connectionString))
             {

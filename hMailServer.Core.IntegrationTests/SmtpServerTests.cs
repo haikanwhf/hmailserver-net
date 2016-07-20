@@ -28,7 +28,10 @@ namespace hMailServer.Core.IntegrationTests
             Func<ISession> connectionFactory = () =>
                 new SmtpServerSession(commandHandler, new NullLog(), new SmtpServerSessionConfiguration());
 
-            var serverConfiguration = new ServerConfiguration();
+            var serverConfiguration = new ServerConfiguration()
+                {
+                    IpAddress = IPAddress.Parse("127.0.0.1")
+                };
 
             var smtpServer = new Server(connectionFactory, new NullLog(), serverConfiguration);
             var runTask = smtpServer.RunAsync();
@@ -83,7 +86,11 @@ namespace hMailServer.Core.IntegrationTests
             Func<ISession> connectionFactory = () =>
                 new SmtpServerSession(commandHandler, new NullLog(), smtpSessionConfiguration);
 
-            var serverConfiguration = new ServerConfiguration();
+            var serverConfiguration = new ServerConfiguration()
+            {
+                IpAddress = IPAddress.Parse("127.0.0.1")
+            };
+
 
             var smtpServer = new Server(connectionFactory, new NullLog(), serverConfiguration);
             var runTask = smtpServer.RunAsync();

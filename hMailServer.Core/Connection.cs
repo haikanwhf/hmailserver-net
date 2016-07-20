@@ -49,6 +49,23 @@ namespace hMailServer.Core
 
             while (true)
             {
+                var allUnprocessedBytes = _inboundUnprocessedStream.ToArray();
+                var allUnprocessedAsciiData = Encoding.ASCII.GetString(allUnprocessedBytes);
+
+                var delimiterPosition = allUnprocessedAsciiData.IndexOf(delimiter, StringComparison.InvariantCultureIgnoreCase);
+
+                if (delimiterPosition >= 0)
+                {
+                    int remainingStartIndex = delimiterPosition + delimiter.Length;
+                    int remainingBytes = allUnprocessedBytes.Length - remainingStartIndex;
+
+                    _inboundUnprocessedStream?.Dispose();
+                    _inboundUnprocessedStream = new MemoryStream();
+                    _inboundUnprocessedStream.Write(allUnprocessedBytes, remainingStartIndex, remainingBytes);
+
+                    return allUnprocessedAsciiData.Substring(0, delimiterPosition);
+                }
+
                 var readBytes = await ExecuteWithTimeout(() =>
                     {
                         return _transferStream.ReadAsync(dataReceived, 0, dataReceived.Length, _cancellationToken);
@@ -58,23 +75,6 @@ namespace hMailServer.Core
                     throw new DisconnectedException();
 
                 _inboundUnprocessedStream.Write(dataReceived, 0, readBytes);
-
-                var allBytes = _inboundUnprocessedStream.ToArray();
-                var data = Encoding.ASCII.GetString(allBytes);
-
-                var index = data.IndexOf(delimiter, StringComparison.InvariantCultureIgnoreCase);
-
-                if (index >= 0)
-                {
-                    int remainingStartIndex = index + delimiter.Length;
-                    int remainingBytes = allBytes.Length - remainingStartIndex;
-
-                    _inboundUnprocessedStream?.Dispose();
-                    _inboundUnprocessedStream = new MemoryStream();
-                    _inboundUnprocessedStream.Write(allBytes, remainingStartIndex, remainingBytes);
-
-                    return data.Substring(0, index);
-                }
             }
         }
         
@@ -156,6 +156,17 @@ namespace hMailServer.Core
                     return 0;
                 });
         }
+
+        public async Task WriteBytes(byte[] bytes)
+        {
+            await ExecuteWithTimeout(async () =>
+            {
+                await _transferStream.WriteAsync(bytes, 0, bytes.Length, _cancellationToken);
+
+                return 0;
+            });
+        }
+
 
         public async Task SslHandshakeAsServer(X509Certificate2 certificate)
         {

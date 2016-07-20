@@ -12,7 +12,7 @@ namespace hMailServer.Entities
         public long Size { get; set; }
         public MessageState State { get; set; }
         public short NumberOfDeliveryAttempts { get; set; }
-        public short Flags { get; set; }
+        public MessageFlags Flags { get; set; }
         public string Filename { get; set; }
         public string From { get; set; }
         public bool Locked { get; set; }
@@ -33,6 +33,18 @@ namespace hMailServer.Entities
             }
 
             return clone;
+        }
+
+        public bool Deleted
+        {
+            get { return Flags.HasFlag(MessageFlags.Deleted); }
+            set
+            {
+                if (value)
+                    Flags = Flags | MessageFlags.Deleted;
+                else
+                    Flags = Flags & ~MessageFlags.Deleted;
+            }
         }
     }
 }

@@ -65,8 +65,9 @@
     <Compile Include="Protocols\POP3\Pop3ServerSessionConfiguration.cs" />
     <Compile Include="Protocols\POP3\Pop3ServerSessionState.cs" />
     <Compile Include="Protocols\Protocol.cs" />
-    <Compile Include="Protocols\SMTP\CommandParser.cs" />
+    <Compile Include="Protocols\SMTP\Parsing\CommandParser.cs" />
     <Compile Include="Protocols\SMTP\ISmtpServerCommandHandler.cs" />
+    <Compile Include="Protocols\SMTP\Parsing\MailFromParseResult.cs" />
     <Compile Include="Protocols\SMTP\SmtpCommand.cs" />
     <Compile Include="Protocols\SMTP\SmtpCommandResult.cs" />
     <Compile Include="Protocols\SMTP\SmtpServerSession.cs" />

@@ -50,5 +50,29 @@ namespace hMailServer.Core.Protocols.POP3
 
             return parts[1].Trim();
         }
+
+        public static int? ParseRetr(string command)
+        {
+            var parts = command.Split(' ');
+
+            if (parts.Length != 2)
+                return null;
+
+            int messageIndex;
+
+            if (int.TryParse(parts[1], out messageIndex))
+                return messageIndex;
+
+            if (messageIndex <= 0)
+                return null;
+
+            return null;
+        }
+
+        public static int? ParseDele(string command)
+        {
+            // Happens to have the exact same signature.
+            return ParseRetr(command);
+        }
     }
 }

@@ -66,5 +66,10 @@ namespace hMailServer.Repository.MySQL
         {
             return new MessageRepository(_connectionString, _dataDirectory);
         }
+        
+        public IFolderRepository CreateFolderRepository()
+        {
+            return new FolderRepository(_connectionString);
+        }
     }
 }

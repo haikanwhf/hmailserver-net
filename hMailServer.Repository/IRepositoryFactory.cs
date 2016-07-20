@@ -4,5 +4,6 @@
    {
       IAccountRepository CreateAccountRepository();
       IMessageRepository CreateMessageRepository();
+      IFolderRepository CreateFolderRepository();
    }
 }

@@ -12,11 +12,13 @@ namespace hMailServer.Delivery
     {
         private readonly IAccountRepository _accountRepository;
         private readonly IMessageRepository _messageRepository;
+        private readonly IFolderRepository _folderRepository;
 
-        public LocalDelivery(IAccountRepository accountRepository, IMessageRepository messageRepository)
+        public LocalDelivery(IAccountRepository accountRepository, IMessageRepository messageRepository, IFolderRepository folderRepository)
         {
             _accountRepository = accountRepository;
             _messageRepository = messageRepository;
+            _folderRepository = folderRepository;
         }
 
         public async Task DeliverAsync(Message message)
@@ -33,8 +35,9 @@ namespace hMailServer.Delivery
                 var localAccount = await _accountRepository.GetByIdAsync(localRecipient.AccountId);
 
                 // TODO: Check quotas
+                var inbox = await _folderRepository.GetInbox(localAccount.Id);
 
-                var accountLevelMessage = await _messageRepository.CreateAccountLevelMessageAsync(message, localAccount);
+                var accountLevelMessage = await _messageRepository.CreateAccountLevelMessageAsync(message, localAccount, inbox);
 
                 // TODO: Execute rules
                 
@@ -46,7 +49,7 @@ namespace hMailServer.Delivery
 
                 accountLevelMessage.State = MessageState.Delivered;
 
-                await _messageRepository.UpdateAsync(accountLevelMessage);
+                await _messageRepository.InsertAsync(accountLevelMessage);
             }
         }
     }

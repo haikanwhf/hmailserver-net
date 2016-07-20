@@ -14,6 +14,8 @@ namespace hMailServer.Application
 
             For<IAccountRepository>().Use(() => repositoryFactory.CreateAccountRepository());
             For<IMessageRepository>().Use(() => repositoryFactory.CreateMessageRepository());
+            For<IFolderRepository>().Use(() => repositoryFactory.CreateFolderRepository());
+
             For<ILog>().Use<Log>();
         }
     }

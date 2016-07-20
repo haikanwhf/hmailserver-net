@@ -17,8 +17,9 @@ namespace hMailServer.Core
         Task<string> ReadStringUntil(string delimiters);
         Task<MemoryStream> Read();
         Task WriteString(string data);
-        Task SslHandshakeAsServer(X509Certificate2 certificate);
+        Task WriteBytes(byte[] bytes);
 
+        Task SslHandshakeAsServer(X509Certificate2 certificate);
         IPEndPoint RemoteEndpoint { get; }
         string SessionId { get; }
     }

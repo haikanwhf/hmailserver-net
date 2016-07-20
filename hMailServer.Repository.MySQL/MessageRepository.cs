@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -35,6 +36,25 @@ namespace hMailServer.Repository.MySQL
             {
                 sqlConnection.Open();
                 
+                var messageId = await sqlConnection.InsertAsync<long>(message);
+
+                message.Id = messageId;
+            }
+
+            foreach (var recipient in message.Recipients)
+            {
+                recipient.MessageId = message.Id;
+
+                await InsertAsync(recipient);
+            }
+        }
+
+        public async Task InsertAsync(Message message)
+        {
+            using (var sqlConnection = new MySqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
                 var messageId = await sqlConnection.InsertAsync<long>(message);
 
                 message.Id = messageId;
@@ -104,7 +124,7 @@ namespace hMailServer.Repository.MySQL
             }
         }
 
-        public Task<Message> CreateAccountLevelMessageAsync(Message message, Account account)
+        public Task<Message> CreateAccountLevelMessageAsync(Message message, Account account, Folder folder)
         {
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
@@ -114,7 +134,9 @@ namespace hMailServer.Repository.MySQL
             var clonedMessage = message.Clone();
             clonedMessage.Id = 0;
             clonedMessage.AccountId = account.Id;
+            clonedMessage.FolderId = folder.Id;
             clonedMessage.Filename = Path.ChangeExtension(Guid.NewGuid().ToString(), ".eml");
+            clonedMessage.Recipients = null;
 
             var accountMessageDirectory = GetAccountMessageDirectory(account);
 
@@ -126,6 +148,36 @@ namespace hMailServer.Repository.MySQL
             File.Copy(Path.Combine(_dataDirectory, message.Filename), messageFileFullPath);
 
             return Task.FromResult(clonedMessage);
+        }
+
+        public async Task<List<Message>> GetMessages(long accountId, long folderId)
+        {
+            using (var sqlConnection = new MySqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                var messages =
+                    await
+                        sqlConnection.QueryAsync<Message>(
+                            "SELECT * FROM hm_messages WHERE messageaccountid = @messageaccountid AND messagefolderid = @messagefolderid",
+                            new
+                            {
+                                messageaccountid = accountId,
+                                messagefolderid = folderId
+                            });
+
+                return messages.ToList();
+            }
+        }
+
+        public Stream GetMessageData(Account account, Message message)
+        {
+            var accountMessageDirectory = GetAccountMessageDirectory(account);
+
+            var messageDirectory = Path.Combine(accountMessageDirectory, message.Filename.Substring(0, 2));
+            var messageFileFullPath = Path.Combine(messageDirectory, message.Filename);
+
+            return File.OpenRead(messageFileFullPath);
         }
 
         public async Task InsertAsync(Recipient messageRecipient)

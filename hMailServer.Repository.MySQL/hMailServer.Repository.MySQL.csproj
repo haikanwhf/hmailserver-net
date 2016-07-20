@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FolderRepository.cs" />
     <Compile Include="MessageRepository.cs" />
     <Compile Include="AccountRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

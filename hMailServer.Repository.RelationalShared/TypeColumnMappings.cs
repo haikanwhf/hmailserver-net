@@ -76,8 +76,22 @@ namespace hMailServer.Repository.RelationalShared
                         {"recipientlocalaccountid", nameof(Recipient.AccountId)},
                         {"recipientoriginaladdress", nameof(Recipient.OriginalAddress)},
                     }
+                },
+                new TypeColumnMapping
+                {
+                    Type = typeof (Folder),
+                    TableName = "hm_imapfolders",
+                    FieldNameByColumnName = new Dictionary<string, string>
+                    {
+                        {"folderid", nameof(Folder.Id)},
+                        {"folderaccountid", nameof(Folder.AccountId)},
+                        {"folderparentid", nameof(Folder.ParentId)},
+                        {"foldername", nameof(Folder.Name)},
+                        {"folderissubscribed", nameof(Folder.Subscribed)},
+                        {"foldercreationtime", nameof(Folder.CreationTime)},
+                        {"foldercurrentuid", nameof(Folder.CurrentUid)},
+                    }
                 }
-
             };
         }
     }

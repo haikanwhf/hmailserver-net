@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading.Tasks;
 using hMailServer.Core.Logging;
@@ -60,11 +62,29 @@ namespace hMailServer.Core.Protocols.POP3
                         case Pop3Command.Capa:
                             await HandleCapa();
                             break;
+                        case Pop3Command.Help:
+                            await HandleHelp();
+                            break;
                         case Pop3Command.User:
                             await HandleUser(data);
                             break;
                         case Pop3Command.Pass:
                             await HandlePass(data);
+                            break;
+                        case Pop3Command.Stat:
+                            await HandleStat();
+                            break;
+                        case Pop3Command.List:
+                            await HandleList();
+                            break;
+                        case Pop3Command.Uidl:
+                            await HandleUidl();
+                            break;
+                        case Pop3Command.Retr:
+                            await HandleRetr(data);
+                            break;
+                        case Pop3Command.Dele:
+                            await HandleDele(data);
                             break;
                         case Pop3Command.Quit:
                             await HandleQuit();
@@ -76,6 +96,86 @@ namespace hMailServer.Core.Protocols.POP3
             {
                 // Connection gone.
             }
+        }
+
+        private async Task HandleDele(string command)
+        {
+            var messageNumber = CommandParser.ParseDele(command);
+
+            if (messageNumber.HasValue)
+            {
+                var commandResult = await _commandHandler.HandleDele(messageNumber.Value);
+                await SendCommandResult(commandResult);
+            }
+            else
+                await SendCommandResult(Pop3CommandResult.CreateNoSuchMessage());
+        }
+
+        private async Task HandleRetr(string command)
+        {
+            var messageIndex = CommandParser.ParseRetr(command);
+
+            if (messageIndex.HasValue)
+            {
+                var stream = await _commandHandler.HandleRetr(messageIndex.Value);
+
+                if (stream == null)
+                {
+                    await SendCommandResult(Pop3CommandResult.CreateNoSuchMessage()); 
+                }
+                else
+                {
+                    await _connection.WriteString("+OK\r\n");
+
+                    // TODO: Add transmission period.
+                    byte[] buf = new byte[4096];
+
+                    int bytesRead = 0;
+                    while ((bytesRead = stream.Read(buf, 0, buf.Length)) > 0)
+                    {
+                        if (bytesRead < buf.Length)
+                        {
+                            var reducedBuffer = new byte[bytesRead];
+                            Buffer.BlockCopy(buf, 0, reducedBuffer, 0, bytesRead);
+                            await _connection.WriteBytes(reducedBuffer);
+                        }
+                        else
+                            await _connection.WriteBytes(buf);
+                    }
+
+                    await _connection.WriteString("\r\n.\r\n");
+                }
+            }
+            else
+            {
+                await SendCommandResult(Pop3CommandResult.CreateNoSuchMessage());
+            }
+        }
+
+        private async Task HandleUidl()
+        {
+            var commandResult = await _commandHandler.HandleUidl();
+
+            await SendCommandResult(commandResult);
+        }
+
+        private async Task HandleList()
+        {
+            var commandResult = await _commandHandler.HandleList();
+
+            await SendCommandResult(commandResult);
+        }
+
+        private async Task HandleStat()
+        {
+            var commandResult = await _commandHandler.HandleStat();
+
+            await SendCommandResult(commandResult);
+        }
+
+        private async Task HandleHelp()
+        {
+            await SendCommandResult(new Pop3CommandResult(true, "Normal POP3 commands allowed"));
         }
 
         private async Task HandleUser(string command)
@@ -117,6 +217,11 @@ namespace hMailServer.Core.Protocols.POP3
             _state.Password = password;
 
             var commandResult = await _commandHandler.HandlePass(_state.Username, _state.Password);
+
+            if (commandResult.Success)
+            {
+                _state.IsLoggedOn = true;
+            }
 
             await SendCommandResult(commandResult);
         }
@@ -161,7 +266,7 @@ namespace hMailServer.Core.Protocols.POP3
             if (commandResult == null)
                 throw new ArgumentException("commandResult");
 
-            string result = commandResult.Success ? "+OK" : "+ERR";
+            string result = commandResult.Success ? "+OK" : "-ERR";
 
             var message = $"{result} {commandResult.Message}";
             await SendLine(message);
