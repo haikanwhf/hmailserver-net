@@ -46,6 +46,9 @@
   <ItemGroup>
     <Compile Include="Account.cs" />
     <Compile Include="AdminLevel.cs" />
+    <Compile Include="Attributes\IgnoreUpdateAttribute.cs" />
+    <Compile Include="Attributes\IgnoreInsertAttribute.cs" />
+    <Compile Include="Attributes\IgnoreSelectAttribute.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="MessageFlags.cs" />

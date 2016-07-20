@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using hMailServer.Core;
 using hMailServer.Core.Protocols.POP3;
 using hMailServer.Entities;
 using hMailServer.Repository;
@@ -24,9 +21,19 @@ namespace hMailServer.Protocols.POP3
             _container = container;
         }
 
-        public Task<Pop3CommandResult> HandleQuit()
+        public async Task<Pop3CommandResult> HandleQuit()
         {
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            if (_account != null && _messages != null)
+            {
+                var messagesToDelete = _messages.Where(message => message.Deleted);
+
+                var messageRepository = _container.GetInstance<IMessageRepository>();
+
+                foreach (var message in messagesToDelete)
+                    await messageRepository.DeleteAsync(_account, message);
+            }
+
+            return Pop3CommandResult.CreateDefaultSuccess();
         }
 
         public Task<Pop3CommandResult> HandleStat()

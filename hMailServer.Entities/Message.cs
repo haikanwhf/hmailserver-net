@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using hMailServer.Entities.Attributes;
 
 namespace hMailServer.Entities
 {
@@ -35,6 +36,9 @@ namespace hMailServer.Entities
             return clone;
         }
 
+        [IgnoreSelect]
+        [IgnoreInsert]
+        [IgnoreUpdate]
         public bool Deleted
         {
             get { return Flags.HasFlag(MessageFlags.Deleted); }

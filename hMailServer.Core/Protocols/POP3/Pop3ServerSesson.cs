@@ -125,22 +125,25 @@ namespace hMailServer.Core.Protocols.POP3
                 }
                 else
                 {
-                    await _connection.WriteString("+OK\r\n");
-
-                    // TODO: Add transmission period.
-                    byte[] buf = new byte[4096];
-
-                    int bytesRead = 0;
-                    while ((bytesRead = stream.Read(buf, 0, buf.Length)) > 0)
+                    using (stream)
                     {
-                        if (bytesRead < buf.Length)
+                        await _connection.WriteString("+OK\r\n");
+
+                        // TODO: Add transmission period.
+                        byte[] buf = new byte[4096];
+
+                        int bytesRead = 0;
+                        while ((bytesRead = stream.Read(buf, 0, buf.Length)) > 0)
                         {
-                            var reducedBuffer = new byte[bytesRead];
-                            Buffer.BlockCopy(buf, 0, reducedBuffer, 0, bytesRead);
-                            await _connection.WriteBytes(reducedBuffer);
+                            if (bytesRead < buf.Length)
+                            {
+                                var reducedBuffer = new byte[bytesRead];
+                                Buffer.BlockCopy(buf, 0, reducedBuffer, 0, bytesRead);
+                                await _connection.WriteBytes(reducedBuffer);
+                            }
+                            else
+                                await _connection.WriteBytes(buf);
                         }
-                        else
-                            await _connection.WriteBytes(buf);
                     }
 
                     await _connection.WriteString("\r\n.\r\n");

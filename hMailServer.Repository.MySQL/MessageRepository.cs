@@ -81,9 +81,28 @@ namespace hMailServer.Repository.MySQL
         public async Task DeleteAsync(Message message)
         {
             if (message.AccountId > 0)
-                throw new NotImplementedException();
+                throw new InvalidOperationException(string.Format("Use DeleteAsync(account, message)"));
 
             var filename = Path.Combine(_dataDirectory, message.Filename);
+
+            using (var sqlConnection = new MySqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                await sqlConnection.DeleteAsync(message);
+            }
+
+            File.Delete(filename);
+        }
+
+        public async Task DeleteAsync(Account account, Message message)
+        {
+            if (account == null)
+                throw new ArgumentNullException(nameof(account));
+            if (message == null)
+                throw new ArgumentNullException(nameof(message));
+
+            var filename = GetMessageFullFileName(account, message);
 
             using (var sqlConnection = new MySqlConnection(_connectionString))
             {
@@ -136,12 +155,10 @@ namespace hMailServer.Repository.MySQL
             clonedMessage.AccountId = account.Id;
             clonedMessage.FolderId = folder.Id;
             clonedMessage.Filename = Path.ChangeExtension(Guid.NewGuid().ToString(), ".eml");
-            clonedMessage.Recipients = null;
+            clonedMessage.Recipients = new List<Recipient>();
 
-            var accountMessageDirectory = GetAccountMessageDirectory(account);
-
-            var messageDirectory = Path.Combine(accountMessageDirectory, clonedMessage.Filename.Substring(0, 2));
-            var messageFileFullPath = Path.Combine(messageDirectory, clonedMessage.Filename);
+            var messageFileFullPath = GetMessageFullFileName(account, clonedMessage);
+            var messageDirectory = Path.GetDirectoryName(messageFileFullPath);
 
             // TODO: Should be possible to do this asynchronously.
             Directory.CreateDirectory(messageDirectory);
@@ -172,12 +189,18 @@ namespace hMailServer.Repository.MySQL
 
         public Stream GetMessageData(Account account, Message message)
         {
+            var messageFileFullPath = GetMessageFullFileName(account, message);
+
+            return File.OpenRead(messageFileFullPath);
+        }
+
+        private string GetMessageFullFileName(Account account, Message message)
+        {
             var accountMessageDirectory = GetAccountMessageDirectory(account);
 
             var messageDirectory = Path.Combine(accountMessageDirectory, message.Filename.Substring(0, 2));
             var messageFileFullPath = Path.Combine(messageDirectory, message.Filename);
-
-            return File.OpenRead(messageFileFullPath);
+            return messageFileFullPath;
         }
 
         public async Task InsertAsync(Recipient messageRecipient)

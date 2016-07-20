@@ -13,6 +13,8 @@ namespace hMailServer.Repository
         Task UpdateAsync(Message message);
         Task DeleteAsync(Message message);
 
+        Task DeleteAsync(Account account, Message message);
+
         Task<Message> GetMessageToDeliverAsync();
         Task<Message> CreateAccountLevelMessageAsync(Message message, Account account, Folder folder);
 
