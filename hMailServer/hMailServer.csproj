@@ -35,6 +35,14 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ARSoft.Tools.Net, Version=2.2.5.0, Culture=neutral, PublicKeyToken=1940454cd762ec57, processorArchitecture=MSIL">
+      <HintPath>..\packages\ARSoft.Tools.Net.2.2.5\lib\net45\ARSoft.Tools.Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.3.5\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
@@ -63,10 +71,12 @@
     <Compile Include="Application\Factory.cs" />
     <Compile Include="Configuration\ServiceConfigurationReader.cs" />
     <Compile Include="Configuration\IniFile.cs" />
+    <Compile Include="Delivery\DeliveryResult.cs" />
+    <Compile Include="Delivery\ExternalDelivery.cs" />
     <Compile Include="Delivery\LocalDelivery.cs" />
+    <Compile Include="Delivery\MessageDeliverer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Delivery\MessageDeliverer.cs" />
     <Compile Include="Protocols\POP3\Pop3ServerCommandHandler.cs" />
     <Compile Include="Protocols\SMTP\SmtpServerCommandHandler.cs" />
     <Compile Include="Protocols\SMTP\SmtpServerSessionState.cs" />
@@ -85,6 +95,10 @@
     <ProjectReference Include="..\hMailServer.Core\hMailServer.Core.csproj">
       <Project>{E8D2635C-2E1E-452A-BC0A-1C7A13132C81}</Project>
       <Name>hMailServer.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\hMailServer.Dns\hMailServer.Dns.csproj">
+      <Project>{b63a3eb9-a609-41bd-a134-ac19e77a6bf9}</Project>
+      <Name>hMailServer.Dns</Name>
     </ProjectReference>
     <ProjectReference Include="..\hMailServer.Entities\hMailServer.Entities.csproj">
       <Project>{4d1f88cb-b51b-4a3b-ac22-8ce9c2103b24}</Project>

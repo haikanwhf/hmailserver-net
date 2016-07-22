@@ -5,6 +5,7 @@ using hMailServer.Core;
 using hMailServer.Core.Protocols.POP3;
 using hMailServer.Core.Protocols.SMTP;
 using hMailServer.Delivery;
+using hMailServer.Dns;
 using hMailServer.Protocols.POP3;
 using hMailServer.Protocols.SMTP;
 using StructureMap;
@@ -15,6 +16,8 @@ namespace hMailServer
     {
         static void Main(string[] args)
         {
+            var client = new DnsClient();
+
             var log = new Log();
 
             var config = ServiceConfigurationReader.Read();

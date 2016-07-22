@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Repository.Rela
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Crypto", "hMailServer.Crypto\hMailServer.Crypto.csproj", "{5EAF12ED-178B-4FEE-B74F-898ED13E5092}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "hMailServer.Dns", "hMailServer.Dns\hMailServer.Dns.csproj", "{B63A3EB9-A609-41BD-A134-AC19E77A6BF9}"
+EndProject
 Global
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
@@ -90,6 +92,10 @@ Global
 		{5EAF12ED-178B-4FEE-B74F-898ED13E5092}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EAF12ED-178B-4FEE-B74F-898ED13E5092}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EAF12ED-178B-4FEE-B74F-898ED13E5092}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B63A3EB9-A609-41BD-A134-AC19E77A6BF9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B63A3EB9-A609-41BD-A134-AC19E77A6BF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B63A3EB9-A609-41BD-A134-AC19E77A6BF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B63A3EB9-A609-41BD-A134-AC19E77A6BF9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

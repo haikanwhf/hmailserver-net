@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using hMailServer.Core;
@@ -80,11 +81,13 @@ namespace hMailServer.Delivery
 
             bool isLastAttempt = message.NumberOfDeliveryAttempts >= 3;
 
+            var deliveryResults = new List<DeliveryResult>();
+
             try
             {
                 var localDelivery = new LocalDelivery(accountRepository, messageRepository, folderRepository);
 
-                await localDelivery.DeliverAsync(message);
+                deliveryResults.AddRange(await localDelivery.DeliverAsync(message));
 
                 await messageRepository.DeleteAsync(message);
             }

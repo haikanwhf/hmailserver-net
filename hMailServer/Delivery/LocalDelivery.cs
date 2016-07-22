@@ -21,12 +21,14 @@ namespace hMailServer.Delivery
             _folderRepository = folderRepository;
         }
 
-        public async Task DeliverAsync(Message message)
+        public async Task<List<DeliveryResult>> DeliverAsync(Message message)
         {
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
             if (message.Recipients == null)
                 throw new ArgumentNullException(nameof(message.Recipients));
+
+            var result = new List<DeliveryResult>();
 
             var localRecipients = message.Recipients.Where(item => item.AccountId > 0);
 
@@ -50,7 +52,11 @@ namespace hMailServer.Delivery
                 accountLevelMessage.State = MessageState.Delivered;
 
                 await _messageRepository.InsertAsync(accountLevelMessage);
+
+                result.Add(new DeliveryResult(localRecipient, true, "Message delivered."));
             }
+
+            return result;
         }
     }
 }
