@@ -21,7 +21,7 @@ namespace hMailServer.Protocols.POP3
             _container = container;
         }
 
-        public async Task<Pop3CommandResult> HandleQuit()
+        public async Task<Pop3CommandReply> HandleQuit()
         {
             if (_account != null && _messages != null)
             {
@@ -33,19 +33,19 @@ namespace hMailServer.Protocols.POP3
                     await messageRepository.DeleteAsync(_account, message);
             }
 
-            return Pop3CommandResult.CreateDefaultSuccess();
+            return Pop3CommandReply.CreateDefaultSuccess();
         }
 
-        public Task<Pop3CommandResult> HandleStat()
+        public Task<Pop3CommandReply> HandleStat()
         {
             var totalSize = _messages.Sum(f => f.Size);
 
             var responseMessage = string.Format("{0} {1}", _messages.Count, totalSize);
 
-            return Task.Run(() => new Pop3CommandResult(true, responseMessage));
+            return Task.Run(() => new Pop3CommandReply(true, responseMessage));
         }
 
-        public Task<Pop3CommandResult> HandleList()
+        public Task<Pop3CommandReply> HandleList()
         {
             var totalSize = _messages.Where(msg => !msg.Deleted).Sum(msg => msg.Size);
 
@@ -64,7 +64,7 @@ namespace hMailServer.Protocols.POP3
 
             builder.Append(".");
 
-            return Task.Run(() => new Pop3CommandResult(true, builder.ToString()));
+            return Task.Run(() => new Pop3CommandReply(true, builder.ToString()));
         }
 
         public async Task<Stream> HandleRetr(int messageNumber)
@@ -81,38 +81,38 @@ namespace hMailServer.Protocols.POP3
             return messageRepository.GetMessageData(_account, message);
         }
 
-        public Task<Pop3CommandResult> HandleDele(int messageNumber)
+        public Task<Pop3CommandReply> HandleDele(int messageNumber)
         {
             if (messageNumber > _messages.Count)
-                return Task.Run(() => new Pop3CommandResult(false, "No such message"));
+                return Task.Run(() => new Pop3CommandReply(false, "No such message"));
 
             var message = _messages[messageNumber - 1];
 
             if (message.Deleted)
             {
-                return Task.Run(() => new Pop3CommandResult(false, "Message already deleted."));
+                return Task.Run(() => new Pop3CommandReply(false, "Message already deleted."));
             }
 
             message.Deleted = true;
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            return Pop3CommandReply.CreateDefaultSuccessTask();
         }
 
-        public Task<Pop3CommandResult> HandleNoop()
+        public Task<Pop3CommandReply> HandleNoop()
         {
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            return Pop3CommandReply.CreateDefaultSuccessTask();
         }
 
-        public Task<Pop3CommandResult> HandleRset()
+        public Task<Pop3CommandReply> HandleRset()
         {
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            return Pop3CommandReply.CreateDefaultSuccessTask();
         }
 
-        public Task<Pop3CommandResult> HandleTop()
+        public Task<Pop3CommandReply> HandleTop()
         {
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            return Pop3CommandReply.CreateDefaultSuccessTask();
         }
 
-        public Task<Pop3CommandResult> HandleUidl()
+        public Task<Pop3CommandReply> HandleUidl()
         {
             var builder = new StringBuilder();
             builder.AppendFormat("\r\n");
@@ -128,22 +128,22 @@ namespace hMailServer.Protocols.POP3
             }
 
             builder.Append(".");
-            return Task.Run(() => new Pop3CommandResult(true, builder.ToString()));
+            return Task.Run(() => new Pop3CommandReply(true, builder.ToString()));
         }
 
-        public Task<Pop3CommandResult> HandleUser(string username)
+        public Task<Pop3CommandReply> HandleUser(string username)
         {
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            return Pop3CommandReply.CreateDefaultSuccessTask();
         }
 
-        public async Task<Pop3CommandResult> HandlePass(string username, string password)
+        public async Task<Pop3CommandReply> HandlePass(string username, string password)
         {
             var accountRepository = _container.GetInstance<IAccountRepository>();
 
             _account = await accountRepository.ValidatePasswordAsync(username, password);
 
             if (_account == null)
-                return new Pop3CommandResult(false, "Invalid username or password");
+                return new Pop3CommandReply(false, "Invalid username or password");
 
             var folderRepository = _container.GetInstance<IFolderRepository>();
             var inbox = await folderRepository.GetInbox(_account.Id);
@@ -151,17 +151,17 @@ namespace hMailServer.Protocols.POP3
             var messageRepository = _container.GetInstance<IMessageRepository>();
             _messages = await messageRepository.GetMessages(_account.Id, inbox.Id);
 
-            return Pop3CommandResult.CreateDefaultSuccess();
+            return Pop3CommandReply.CreateDefaultSuccess();
         }
 
-        public Task<Pop3CommandResult> HandleCapa()
+        public Task<Pop3CommandReply> HandleCapa()
         {
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            return Pop3CommandReply.CreateDefaultSuccessTask();
         }
 
-        public Task<Pop3CommandResult> HandleStls()
+        public Task<Pop3CommandReply> HandleStls()
         {
-            return Pop3CommandResult.CreateDefaultSuccessTask();
+            return Pop3CommandReply.CreateDefaultSuccessTask();
         }
     }
 }

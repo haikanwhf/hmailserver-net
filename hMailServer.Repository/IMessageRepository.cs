@@ -20,6 +20,9 @@ namespace hMailServer.Repository
 
         Task<List<Message>> GetMessages(long accountId, long folderId);
 
+        Stream GetMessageData(Message message);
         Stream GetMessageData(Account account, Message message);
+
+        Task DeleteRecipientAsync(Recipient recipient);
     }
 }

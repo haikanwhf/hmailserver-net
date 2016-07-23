@@ -20,23 +20,23 @@ namespace hMailServer.Protocols.SMTP
             _container = container;
         }
 
-        public Task<SmtpCommandResult> HandleRset()
+        public Task<SmtpCommandReply> HandleRset()
         {
             _state.HandleRset();
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleHelo(string hostName)
+        public Task<SmtpCommandReply> HandleHelo(string hostName)
         {
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleEhlo(string hostName)
+        public Task<SmtpCommandReply> HandleEhlo(string hostName)
         {
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
+        public Task<SmtpCommandReply> HandleMailFrom(string fromAddress)
         {
             var accountRepository = _container.GetInstance<IAccountRepository>();
             var account = accountRepository.GetByNameAsync(fromAddress).Result;
@@ -44,10 +44,10 @@ namespace hMailServer.Protocols.SMTP
             bool isLocalAccount = account != null;
 
             _state.FromAddress = fromAddress;
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
+        public Task<SmtpCommandReply> HandleRcptTo(string recipientAddress)
         {
             var accountRepository = _container.GetInstance<IAccountRepository>();
             var account = accountRepository.GetByNameAsync(recipientAddress).Result;
@@ -60,10 +60,10 @@ namespace hMailServer.Protocols.SMTP
                 };
 
             _state.Recipients.Add(recipient);
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public async Task<SmtpCommandResult> HandleData(Stream stream)
+        public async Task<SmtpCommandReply> HandleData(Stream stream)
         {
             var message = new Message
                 {
@@ -76,7 +76,7 @@ namespace hMailServer.Protocols.SMTP
             var messageRepository = _container.GetInstance<IMessageRepository>();
             await messageRepository.InsertAsync(message, stream);
 
-            return SmtpCommandResult.CreateDefault250Success();
+            return SmtpCommandReply.CreateDefault250Success();
         }
     }
 }

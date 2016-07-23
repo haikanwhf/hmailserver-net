@@ -88,11 +88,20 @@ namespace hMailServer.Repository.MySQL
             using (var sqlConnection = new MySqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-
                 await sqlConnection.DeleteAsync(message);
+
+                await DeleteRecipientsAsync(message, sqlConnection);
             }
 
             File.Delete(filename);
+        }
+
+        private static async Task DeleteRecipientsAsync(Message message, MySqlConnection sqlConnection)
+        {
+            foreach (var recipient in message.Recipients)
+            {
+                await sqlConnection.DeleteAsync(recipient);
+            }
         }
 
         public async Task DeleteAsync(Account account, Message message)
@@ -107,8 +116,9 @@ namespace hMailServer.Repository.MySQL
             using (var sqlConnection = new MySqlConnection(_connectionString))
             {
                 sqlConnection.Open();
-
                 await sqlConnection.DeleteAsync(message);
+
+                await DeleteRecipientsAsync(message, sqlConnection);
             }
 
             File.Delete(filename);
@@ -192,6 +202,26 @@ namespace hMailServer.Repository.MySQL
             var messageFileFullPath = GetMessageFullFileName(account, message);
 
             return File.OpenRead(messageFileFullPath);
+        }
+
+        public async Task DeleteRecipientAsync(Recipient recipient)
+        {
+            if (recipient == null)
+                throw new ArgumentNullException(nameof(recipient));
+
+            using (var sqlConnection = new MySqlConnection(_connectionString))
+            {
+                sqlConnection.Open();
+
+                await sqlConnection.DeleteAsync(recipient);
+            }
+        }
+
+        public Stream GetMessageData(Message message)
+        {
+            var messageFullPath = Path.Combine(_dataDirectory, message.Filename);
+            
+            return File.OpenRead(messageFullPath);
         }
 
         private string GetMessageFullFileName(Account account, Message message)

@@ -5,11 +5,11 @@ namespace hMailServer.Core.Protocols.SMTP
 {
     public interface ISmtpServerCommandHandler
     {
-        Task<SmtpCommandResult> HandleRset();
-        Task<SmtpCommandResult> HandleHelo(string hostName);
-        Task<SmtpCommandResult> HandleEhlo(string hostName);
-        Task<SmtpCommandResult> HandleMailFrom(string fromAddress);
-        Task<SmtpCommandResult> HandleRcptTo(string recipientAddress);
-        Task<SmtpCommandResult> HandleData(Stream stream);
+        Task<SmtpCommandReply> HandleRset();
+        Task<SmtpCommandReply> HandleHelo(string hostName);
+        Task<SmtpCommandReply> HandleEhlo(string hostName);
+        Task<SmtpCommandReply> HandleMailFrom(string fromAddress);
+        Task<SmtpCommandReply> HandleRcptTo(string recipientAddress);
+        Task<SmtpCommandReply> HandleData(Stream stream);
     }
 }

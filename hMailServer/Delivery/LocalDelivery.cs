@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using hMailServer.Core;
+using hMailServer.Core.Entities;
+using hMailServer.Core.Logging;
 using hMailServer.Entities;
 using hMailServer.Repository;
 
@@ -13,15 +16,17 @@ namespace hMailServer.Delivery
         private readonly IAccountRepository _accountRepository;
         private readonly IMessageRepository _messageRepository;
         private readonly IFolderRepository _folderRepository;
+        private readonly ILog _log;
 
-        public LocalDelivery(IAccountRepository accountRepository, IMessageRepository messageRepository, IFolderRepository folderRepository)
+        public LocalDelivery(IAccountRepository accountRepository, IMessageRepository messageRepository, IFolderRepository folderRepository, ILog log)
         {
             _accountRepository = accountRepository;
             _messageRepository = messageRepository;
             _folderRepository = folderRepository;
+            _log = log;
         }
 
-        public async Task<List<DeliveryResult>> DeliverAsync(Message message)
+        public async Task<List<DeliveryResult>> DeliverAsync(Message message, List<Recipient> recipients)
         {
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
@@ -30,10 +35,16 @@ namespace hMailServer.Delivery
 
             var result = new List<DeliveryResult>();
 
-            var localRecipients = message.Recipients.Where(item => item.AccountId > 0);
-
-            foreach (var localRecipient in localRecipients)
+            foreach (var localRecipient in recipients)
             {
+                _log.LogInfo(new LogEvent()
+                    {
+                        EventType = LogEventType.Application,
+                        LogLevel = LogLevel.Info,
+                        Message = $"Delivering message from {message.From} to {localRecipient.Address}",
+                        Protocol = "SMTPD",
+                    });
+
                 var localAccount = await _accountRepository.GetByIdAsync(localRecipient.AccountId);
 
                 // TODO: Check quotas
@@ -53,7 +64,10 @@ namespace hMailServer.Delivery
 
                 await _messageRepository.InsertAsync(accountLevelMessage);
 
-                result.Add(new DeliveryResult(localRecipient, true, "Message delivered."));
+                // Delete the recipient right away, so that if there is a crash we don't end up sending to this recipient again.
+                await _messageRepository.DeleteRecipientAsync(localRecipient);
+
+                result.Add(new DeliveryResult(localRecipient.Address, ReplyCodeSeverity.Positive, "Message delivered."));
             }
 
             return result;

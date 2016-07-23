@@ -50,7 +50,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
                     if (!_state.IsCommandValid(command))
                     {
-                        await SendCommandResult(new SmtpCommandResult(503, "bad sequence of commands"));
+                        await SendCommandResult(new SmtpCommandReply(503, "bad sequence of commands"));
                         continue;
                     }
 
@@ -97,12 +97,12 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private async Task HandleHelp()
         {
-            await SendCommandResult(new SmtpCommandResult(211, "211 DATA HELO EHLO MAIL NOOP QUIT RCPT RSET SAML TURN VRFY"));
+            await SendCommandResult(new SmtpCommandReply(211, "211 DATA HELO EHLO MAIL NOOP QUIT RCPT RSET SAML TURN VRFY"));
         }
 
         private async Task HandleStartTls()
         {
-            await SendCommandResult(new SmtpCommandResult(220, "Go ahead"));
+            await SendCommandResult(new SmtpCommandReply(220, "Go ahead"));
 
             await _connection.SslHandshakeAsServer(_configuration.SslCertificate);
 
@@ -119,7 +119,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
         private async Task HandleQuit()
         {
-            await SendCommandResult(new SmtpCommandResult(221, "Bye"));
+            await SendCommandResult(new SmtpCommandReply(221, "Bye"));
         }
 
         private async Task HandleData()
@@ -170,7 +170,7 @@ namespace hMailServer.Core.Protocols.SMTP
 
             if (!EmailAddressParser.IsValidEmailAddress(mailFromParseResult.Address))
             {
-                await SendCommandResult(new SmtpCommandResult(550, "The address is not valid"));
+                await SendCommandResult(new SmtpCommandReply(550, "The address is not valid"));
                 return;
             }
             
@@ -232,7 +232,7 @@ namespace hMailServer.Core.Protocols.SMTP
             return connection.ReadStringUntil("\r\n");
         }
 
-        private async Task SendCommandResult(SmtpCommandResult commandResult)
+        private async Task SendCommandResult(SmtpCommandReply commandResult)
         {
             if (commandResult == null)
                 throw new ArgumentException("commandResult");

@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using ARSoft.Tools.Net;
 using ARSoft.Tools.Net.Dns;
+using hMailServer.Core.Dns;
 
 namespace hMailServer.Dns
 {
-    public class DnsClient
+    public class DnsClient : IDnsClient
     {
-        private ARSoft.Tools.Net.Dns.DnsClient _dnsClient;
+        private readonly ARSoft.Tools.Net.Dns.DnsClient _dnsClient;
 
         public DnsClient()
         {

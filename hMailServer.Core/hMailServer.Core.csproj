@@ -50,8 +50,11 @@
   <ItemGroup>
     <Compile Include="ConnectionSecurity.cs" />
     <Compile Include="DisconnectedException.cs" />
-    <Compile Include="Dns\IDns.cs" />
+    <Compile Include="Dns\IDnsClient.cs" />
     <Compile Include="EmailAddressParser.cs" />
+    <Compile Include="Entities\DeliveryResult.cs" />
+    <Compile Include="Entities\ReplyCodeSeverity.cs" />
+    <Compile Include="Entities\IRecipient.cs" />
     <Compile Include="IConnection.cs" />
     <Compile Include="Logging\ILog.cs" />
     <Compile Include="ISession.cs" />
@@ -69,16 +72,21 @@
     <Compile Include="Protocols\POP3\CommandParser.cs" />
     <Compile Include="Protocols\POP3\IPop3ServerCommandHandler.cs" />
     <Compile Include="Protocols\POP3\Pop3Command.cs" />
-    <Compile Include="Protocols\POP3\Pop3CommandResult.cs" />
+    <Compile Include="Protocols\POP3\Pop3CommandReply.cs" />
     <Compile Include="Protocols\POP3\Pop3ServerSesson.cs" />
     <Compile Include="Protocols\POP3\Pop3ServerSessionConfiguration.cs" />
     <Compile Include="Protocols\POP3\Pop3ServerSessionState.cs" />
     <Compile Include="Protocols\Protocol.cs" />
+    <Compile Include="Protocols\SmtpClient\CommandReplyParser.cs" />
+    <Compile Include="Entities\IMessage.cs" />
+    <Compile Include="Protocols\SmtpClient\MessageData.cs" />
+    <Compile Include="Protocols\SmtpClient\SmtpClientSession.cs" />
+    <Compile Include="Protocols\SmtpClient\SmtpClientSessionConfiguration.cs" />
     <Compile Include="Protocols\SMTP\Parsing\CommandParser.cs" />
     <Compile Include="Protocols\SMTP\ISmtpServerCommandHandler.cs" />
     <Compile Include="Protocols\SMTP\Parsing\MailFromParseResult.cs" />
     <Compile Include="Protocols\SMTP\SmtpCommand.cs" />
-    <Compile Include="Protocols\SMTP\SmtpCommandResult.cs" />
+    <Compile Include="Protocols\SMTP\SmtpCommandReply.cs" />
     <Compile Include="Protocols\SMTP\SmtpServerSession.cs" />
     <Compile Include="Protocols\SMTP\SmtpServerSessionState.cs" />
     <Compile Include="Protocols\SMTP\TransmissionBuffer.cs" />
@@ -94,6 +102,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

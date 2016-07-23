@@ -16,46 +16,46 @@ namespace hMailServer.Core.IntegrationTests
         public List<string> Recipients { get; set; } = new List<string>();
         public MemoryStream Body = new MemoryStream();
 
-        public Task<SmtpCommandResult> HandleRset()
+        public Task<SmtpCommandReply> HandleRset()
         {
             HeloHostname = null;
             EhloHostname = null;
             MailFrom = null;
             Recipients = new List<string>();
         
-            return SmtpCommandResult.CreateDefault250SuccessTask();  
+            return SmtpCommandReply.CreateDefault250SuccessTask();  
         }
 
-        public Task<SmtpCommandResult> HandleHelo(string hostName)
+        public Task<SmtpCommandReply> HandleHelo(string hostName)
         {
             HeloHostname = hostName;
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleEhlo(string hostName)
+        public Task<SmtpCommandReply> HandleEhlo(string hostName)
         {
             EhloHostname = hostName;
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleMailFrom(string fromAddress)
+        public Task<SmtpCommandReply> HandleMailFrom(string fromAddress)
         {
             MailFrom = fromAddress;
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleRcptTo(string recipientAddress)
+        public Task<SmtpCommandReply> HandleRcptTo(string recipientAddress)
         {
             Recipients.Add(recipientAddress);
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
 
-        public Task<SmtpCommandResult> HandleData(Stream stream)
+        public Task<SmtpCommandReply> HandleData(Stream stream)
         {
             stream.CopyTo(Body);
             Body.Seek(0, SeekOrigin.Begin);
 
-            return SmtpCommandResult.CreateDefault250SuccessTask();
+            return SmtpCommandReply.CreateDefault250SuccessTask();
         }
     }
 }

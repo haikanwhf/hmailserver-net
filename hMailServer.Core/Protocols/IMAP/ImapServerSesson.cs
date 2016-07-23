@@ -47,7 +47,7 @@ namespace hMailServer.Core.Protocols.IMAP
 
                     if (!_state.IsCommandValid(command))
                     {
-                        await SendCommandResult(new Pop3CommandResult(false, "Invalid command in current state"));
+                        await SendCommandResult(new Pop3CommandReply(false, "Invalid command in current state"));
                         continue;
                     }
 
@@ -90,7 +90,7 @@ namespace hMailServer.Core.Protocols.IMAP
             return connection.ReadStringUntil("\r\n");
         }
 
-        private async Task SendCommandResult(Pop3CommandResult commandResult)
+        private async Task SendCommandResult(Pop3CommandReply commandResult)
         {
             if (commandResult == null)
                 throw new ArgumentException("commandResult");

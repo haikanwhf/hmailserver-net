@@ -71,7 +71,6 @@
     <Compile Include="Application\Factory.cs" />
     <Compile Include="Configuration\ServiceConfigurationReader.cs" />
     <Compile Include="Configuration\IniFile.cs" />
-    <Compile Include="Delivery\DeliveryResult.cs" />
     <Compile Include="Delivery\ExternalDelivery.cs" />
     <Compile Include="Delivery\LocalDelivery.cs" />
     <Compile Include="Delivery\MessageDeliverer.cs" />

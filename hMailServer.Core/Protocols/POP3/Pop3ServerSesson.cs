@@ -53,7 +53,7 @@ namespace hMailServer.Core.Protocols.POP3
 
                     if (!_state.IsCommandValid(command))
                     {
-                        await SendCommandResult(new Pop3CommandResult(false, "Invalid command in current state"));
+                        await SendCommandResult(new Pop3CommandReply(false, "Invalid command in current state"));
                         continue;
                     }
 
@@ -108,7 +108,7 @@ namespace hMailServer.Core.Protocols.POP3
                 await SendCommandResult(commandResult);
             }
             else
-                await SendCommandResult(Pop3CommandResult.CreateNoSuchMessage());
+                await SendCommandResult(Pop3CommandReply.CreateNoSuchMessage());
         }
 
         private async Task HandleRetr(string command)
@@ -121,7 +121,7 @@ namespace hMailServer.Core.Protocols.POP3
 
                 if (stream == null)
                 {
-                    await SendCommandResult(Pop3CommandResult.CreateNoSuchMessage()); 
+                    await SendCommandResult(Pop3CommandReply.CreateNoSuchMessage()); 
                 }
                 else
                 {
@@ -151,7 +151,7 @@ namespace hMailServer.Core.Protocols.POP3
             }
             else
             {
-                await SendCommandResult(Pop3CommandResult.CreateNoSuchMessage());
+                await SendCommandResult(Pop3CommandReply.CreateNoSuchMessage());
             }
         }
 
@@ -178,7 +178,7 @@ namespace hMailServer.Core.Protocols.POP3
 
         private async Task HandleHelp()
         {
-            await SendCommandResult(new Pop3CommandResult(true, "Normal POP3 commands allowed"));
+            await SendCommandResult(new Pop3CommandReply(true, "Normal POP3 commands allowed"));
         }
 
         private async Task HandleUser(string command)
@@ -192,13 +192,13 @@ namespace hMailServer.Core.Protocols.POP3
                 if (string.IsNullOrWhiteSpace(username))
                 {
                     // TODO: Check message
-                    await SendCommandResult(new Pop3CommandResult(false, "Invalid user name."));
+                    await SendCommandResult(new Pop3CommandReply(false, "Invalid user name."));
                     return;
                 }
 
                 _state.Username = username;
 
-                await SendCommandResult(new Pop3CommandResult(true, "Send your password."));
+                await SendCommandResult(new Pop3CommandReply(true, "Send your password."));
             }
             else
             {
@@ -213,7 +213,7 @@ namespace hMailServer.Core.Protocols.POP3
             if (string.IsNullOrWhiteSpace(password))
             {
                 // TODO: Check message
-                await SendCommandResult(new Pop3CommandResult(false, "Invalid password"));
+                await SendCommandResult(new Pop3CommandReply(false, "Invalid password"));
                 return;
             }
 
@@ -232,7 +232,7 @@ namespace hMailServer.Core.Protocols.POP3
        
         private async Task HandleCapa()
         {
-            await SendCommandResult(new Pop3CommandResult(true, "CAPA list follows\r\nUSER\r\nUIDL\r\nTOP\r\n."));
+            await SendCommandResult(new Pop3CommandReply(true, "CAPA list follows\r\nUSER\r\nUIDL\r\nTOP\r\n."));
         }
 
         private async Task HandleStls()
@@ -264,7 +264,7 @@ namespace hMailServer.Core.Protocols.POP3
             return connection.ReadStringUntil("\r\n");
         }
 
-        private async Task SendCommandResult(Pop3CommandResult commandResult)
+        private async Task SendCommandResult(Pop3CommandReply commandResult)
         {
             if (commandResult == null)
                 throw new ArgumentException("commandResult");

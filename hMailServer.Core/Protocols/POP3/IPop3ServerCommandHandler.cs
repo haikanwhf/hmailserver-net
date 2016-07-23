@@ -5,18 +5,18 @@ namespace hMailServer.Core.Protocols.POP3
 {
     public interface IPop3ServerCommandHandler
     {
-        Task<Pop3CommandResult> HandleQuit();
-        Task<Pop3CommandResult> HandleStat();
-        Task<Pop3CommandResult> HandleList();
+        Task<Pop3CommandReply> HandleQuit();
+        Task<Pop3CommandReply> HandleStat();
+        Task<Pop3CommandReply> HandleList();
         Task<Stream> HandleRetr(int messageNumber);
-        Task<Pop3CommandResult> HandleDele(int messageNumber);
-        Task<Pop3CommandResult> HandleNoop();
-        Task<Pop3CommandResult> HandleRset();
-        Task<Pop3CommandResult> HandleTop();
-        Task<Pop3CommandResult> HandleUidl();
-        Task<Pop3CommandResult> HandleUser(string username);
-        Task<Pop3CommandResult> HandlePass(string username, string password);
-        Task<Pop3CommandResult> HandleCapa();
-        Task<Pop3CommandResult> HandleStls();
+        Task<Pop3CommandReply> HandleDele(int messageNumber);
+        Task<Pop3CommandReply> HandleNoop();
+        Task<Pop3CommandReply> HandleRset();
+        Task<Pop3CommandReply> HandleTop();
+        Task<Pop3CommandReply> HandleUidl();
+        Task<Pop3CommandReply> HandleUser(string username);
+        Task<Pop3CommandReply> HandlePass(string username, string password);
+        Task<Pop3CommandReply> HandleCapa();
+        Task<Pop3CommandReply> HandleStls();
     }
 }
